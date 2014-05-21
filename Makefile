@@ -1,13 +1,16 @@
 # Makefile to build LED_Matrix
 
-CXX = gcc
+CXX = g++
 CXXFLAGS = -Wall -Werror
+# Prevent accidental build of C code
+CC = <none>
+CFLAGS = <none>
 
-OBJECTS = matrix.o matrix-debug.o
+OBJECTS = matrix.o matrix-debug.o matrix-driver.o
 EXECUTABLE = led_matrix
 
-default: clean
-default: CXXFLAGS += -O3
+#default: clean
+#default: CXXFLAGS += -O3
 default: all
 
 # Debug target removed as long as DEBUG is defined in source for all builds
@@ -15,8 +18,6 @@ default: all
 #debug: CXXFLAGS += -DDEBUG -O0 -g
 #debug: all
 
-all: CFLAGS = $(CXXFLAGS)
-all: CC = $(CXX)
 all: $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -o $(EXECUTABLE) $(OBJECTS) -lncurses
 
