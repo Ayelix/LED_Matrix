@@ -10,9 +10,10 @@ default: clean
 default: CXXFLAGS += -O3
 default: all
 
-debug: clean
-debug: CXXFLAGS += -DDEBUG -O0 -g
-debug: all
+# Debug target removed as long as DEBUG is defined in source for all builds
+#debug: clean
+#debug: CXXFLAGS += -DDEBUG -O0 -g
+#debug: all
 
 all: CFLAGS = $(CXXFLAGS)
 all: CC = $(CXX)

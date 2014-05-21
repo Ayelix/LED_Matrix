@@ -1,7 +1,13 @@
+/* matrix-debug - functions to write debug output to screen.
+ *
+ */
 #ifndef _DEBUG_H
 #define _DEBUG_H
 
 #include <ncurses.h>
+
+// Undefine if debug output no longer desired for all builds
+#define DEBUG
 
 #ifdef DEBUG
 #include <cstdio>
