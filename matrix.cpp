@@ -20,7 +20,7 @@ static void usage()
  */
 int main (int argc, char * argv[])
 {
-    DGB_PRINTF("Starting in debug mode.\n");
+    DBG_PRINTF("Starting in debug mode.\n");
     
     // Default values for options which may be changed with arguments
     bool emulate = false;
@@ -49,6 +49,6 @@ int main (int argc, char * argv[])
         exit(EXIT_FAILURE);
     }
     
-    
     exit(EXIT_SUCCESS);
+    DBG_PRINTF("foo %d\n", 13);
 }
