@@ -1,13 +1,18 @@
 # Makefile to build LED_Matrix
 
 CC = gcc
-FLAGS = -Wall -Werror
+CFLAGS = -Wall -Werror
 
-OBJECTS = matrix.o
+SOURCES = matrix.cpp
 EXECUTABLE = led_matrix
 
-all: $(OBJECTS)
-	$(CC) $(FLAGS) -o $(EXECUTABLE) $(OBJECTS)
+default: CFLAGS += -O3
+default:
+	$(CC) $(CFLAGS) -o $(EXECUTABLE) $(SOURCES)
+
+debug: CFLAGS += -DDEBUG -O0 -g
+debug: clean
+	$(CC) $(CFLAGS) -o $(EXECUTABLE) $(SOURCES)
 
 clean:
 	rm -f *.o $(EXECUTABLE)

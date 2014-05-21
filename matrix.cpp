@@ -2,6 +2,8 @@
 #include <cstdlib>
 #include <unistd.h>
 
+#include "debug.h"
+
 #define PROGRAM_NAME ("led_matrix")
 
 static void usage()
@@ -13,8 +15,13 @@ static void usage()
     PROGRAM_NAME);
 }
 
+/* main
+ * Performs command-line parsing and high-level state machine control.
+ */
 int main (int argc, char * argv[])
 {
+    DGB_PRINTF("Starting in debug mode.\n");
+    
     // Default values for options which may be changed with arguments
     bool emulate = false;
     
@@ -41,6 +48,7 @@ int main (int argc, char * argv[])
         fprintf(stderr, "Matrix control not implemented, use -e.\n");
         exit(EXIT_FAILURE);
     }
+    
     
     exit(EXIT_SUCCESS);
 }
