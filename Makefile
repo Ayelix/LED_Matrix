@@ -3,7 +3,7 @@
 CXX = gcc
 CXXFLAGS = -Wall -Werror
 
-OBJECTS = matrix.o
+OBJECTS = matrix.o matrix-debug.o
 EXECUTABLE = led_matrix
 
 default: clean
@@ -17,7 +17,7 @@ debug: all
 all: CFLAGS = $(CXXFLAGS)
 all: CC = $(CXX)
 all: $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -o $(EXECUTABLE) $(OBJECTS)
+	$(CXX) $(CXXFLAGS) -o $(EXECUTABLE) $(OBJECTS) -lncurses
 
 clean:
 	rm -f *.o $(EXECUTABLE)

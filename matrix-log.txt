@@ -1,0 +1,2 @@
+Debug mode initialized.
+Starting in debug mode.

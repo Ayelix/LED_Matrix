@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <unistd.h>
 
-#include "debug.h"
+#include "matrix-debug.h"
 
 #define PROGRAM_NAME ("led_matrix")
 
@@ -20,8 +20,6 @@ static void usage()
  */
 int main (int argc, char * argv[])
 {
-    DBG_PRINTF("Starting in debug mode.\n");
-    
     // Default values for options which may be changed with arguments
     bool emulate = false;
     
@@ -49,6 +47,8 @@ int main (int argc, char * argv[])
         exit(EXIT_FAILURE);
     }
     
+    DBG_INIT();
+    DBG_PRINTF("Starting in debug mode.\n");
+    
     exit(EXIT_SUCCESS);
-    DBG_PRINTF("foo %d\n", 13);
 }
