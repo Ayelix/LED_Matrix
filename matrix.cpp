@@ -1,8 +1,11 @@
 #include <cstdio>
 #include <cstdlib>
 #include <unistd.h>
+#include <ctime>
 
 #include "matrix-debug.h"
+#include "matrix-driver.h"
+#include "matrix-driver-console.h"
 
 #define PROGRAM_NAME ("led_matrix")
 
@@ -40,15 +43,50 @@ int main (int argc, char * argv[])
         }
     }
     
-    if (emulate) printf("Starting in emulation mode.\n");
+    DBG_INIT();
+    DBG_PRINTF("Starting in debug mode.\n");
+    
+    // Create the appropriate driver type
+    MatrixDriver * driver;
+    if (emulate)
+    {
+        DBG_PRINTF("Starting in emulation mode.\n");
+        driver = new MatrixDriverConsole();
+    }
     else
     {
-        fprintf(stderr, "Matrix control not implemented, use -e.\n");
+        DBG_PRINTF("Matrix control not implemented, use -e.\n");
         exit(EXIT_FAILURE);
     }
     
-    DBG_INIT();
-    DBG_PRINTF("Starting in debug mode.\n");
+    DBG_PRINTF("Created driver.\n");
+    sleep(1);
+    
+    DBG_PRINTF("Testing pixels.\n");
+    struct timespec t;
+    t.tv_sec = 0;
+    t.tv_nsec = 070000000;
+    for (size_t x = 0; x < driver->COLUMNS; x++)
+    {
+        for (size_t y = 0; y < driver->ROWS; y++)
+        {
+            driver->setPixel(x, y);
+            driver->update();
+            nanosleep(&t, NULL);
+        }
+    }
+    for (size_t y = 0; y < driver->ROWS; y++)
+    {
+        for (size_t x = 0; x < driver->COLUMNS; x++)
+        {
+            driver->clearPixel(x, y);
+            driver->update();
+            nanosleep(&t, NULL);
+        }
+    }
+    
+    // Free allocated MatrixDriver
+    delete driver;
     
     exit(EXIT_SUCCESS);
 }

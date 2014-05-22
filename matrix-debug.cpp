@@ -23,6 +23,7 @@ void DBG_INIT()
 
     // Setup ncurses mode
     initscr();
+    scrollok(stdscr, true);
     atexit(DBG_endwin);
     DBG_PRINTF("Debug mode initialized.\n");
 }
