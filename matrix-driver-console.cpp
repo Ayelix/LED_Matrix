@@ -13,11 +13,13 @@ MatrixDriverConsole::MatrixDriverConsole()
     wrefresh(stdscr);
     
     // Create new ncurses window at top right of screen
-    matrixWindow = newwin(height, width, 0, 0);
+    // First the window the full screen width so refreshing it will clear any
+    // text left over from the old stdscr.
+    matrixWindow = newwin(height, COLS, 0, 0);
+    wrefresh(matrixWindow);
+    wresize(matrixWindow, height, width);
     curs_set(0);
     box(matrixWindow, 0, 0);
-    
-    // Refresh windows
     wrefresh(matrixWindow);
 }
 

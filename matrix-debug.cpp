@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 
+char DBG_LOGFILE_NAME[] = "matrix-log.txt";
 FILE * DBG_logfile = NULL;
 
 // Wrapper for endwin(), used for atexit()
@@ -14,7 +15,7 @@ static void DBG_endwin()
 void DBG_INIT()
 {
     // Open debug log file
-    DBG_logfile = fopen("matrix-log.txt", "w");
+    DBG_logfile = fopen(DBG_LOGFILE_NAME, "w");
     if (NULL == DBG_logfile)
     {
         perror("Unable to open log file: ");
@@ -25,7 +26,7 @@ void DBG_INIT()
     initscr();
     scrollok(stdscr, true);
     atexit(DBG_endwin);
-    DBG_PRINTF("Debug mode initialized.\n");
+    DBG_PRINTF("Debug mode initialized.  Log file is \"%s\".\n", DBG_LOGFILE_NAME);
 }
 
 #endif

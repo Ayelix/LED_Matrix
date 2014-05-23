@@ -75,9 +75,19 @@ int main (int argc, char * argv[])
             nanosleep(&t, NULL);
         }
     }
+    t.tv_nsec /= 2;
     for (size_t y = 0; y < driver->ROWS; y++)
     {
-        for (size_t x = 0; x < driver->COLUMNS; x++)
+        for (size_t x = y % 2; x < driver->COLUMNS; x += 2)
+        {
+            driver->clearPixel(x, y);
+            driver->update();
+            nanosleep(&t, NULL);
+        }
+    }
+    for (size_t y = 0; y < driver->ROWS; y++)
+    {
+        for (size_t x = 1 - (y % 2); x < driver->COLUMNS; x += 2)
         {
             driver->clearPixel(x, y);
             driver->update();
@@ -87,6 +97,9 @@ int main (int argc, char * argv[])
     
     // Free allocated MatrixDriver
     delete driver;
+    
+    DBG_PRINTF("Done testing, exit in 1 second.\n");
+    sleep(1);
     
     exit(EXIT_SUCCESS);
 }
