@@ -16,10 +16,17 @@ public:
     // Create and initialize MatrixDriver
     MatrixDriver();
     
-    // Get and set pixel states (true/set = on, false/clear = off)
+    // Set pixel states (true/set = on, false/clear = off)
     // Setters do not update the actual matrix!
     void setPixel(size_t col, size_t row);
     void clearPixel(size_t col, size_t row);
+    void assignPixel(size_t col, size_t row, bool value);
+    void togglePixel(size_t col, size_t row);
+    void clearAllPixels();
+    
+    // Get current pixel state.  Return value is based on the last value set for
+    // the pixel so, if update() hasn't been called, this may not match the
+    // actual state.
     bool getPixel(size_t col, size_t row) const;
     
     // Update the actual matrix state
@@ -39,8 +46,6 @@ protected:
 private:
     // Matrix state
     bool matrix[COLUMNS][ROWS];
-    // Update matrix state entry
-    void assignPixel(size_t col, size_t row, bool value);
 };
 
 #endif

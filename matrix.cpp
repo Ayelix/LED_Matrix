@@ -60,46 +60,54 @@ int main (int argc, char * argv[])
     }
     
     DBG_PRINTF("Created driver.\n");
-    sleep(1);
     
     DBG_PRINTF("Testing pixels.\n");
-    struct timespec t;
-    t.tv_sec = 0;
-    t.tv_nsec = 070000000;
+    
+    struct timespec delay;
+    delay.tv_sec = 0;
+    delay.tv_nsec = 500000000;
+    
+    // Turn on all pixels
     for (size_t x = 0; x < driver->COLUMNS; x++)
     {
         for (size_t y = 0; y < driver->ROWS; y++)
         {
             driver->setPixel(x, y);
-            driver->update();
-            nanosleep(&t, NULL);
         }
     }
-    t.tv_nsec /= 2;
+    driver->update();
+    sleep(1);
+    
+    // Write a checkerboard pattern then toggle all pixels a few times
     for (size_t y = 0; y < driver->ROWS; y++)
     {
         for (size_t x = y % 2; x < driver->COLUMNS; x += 2)
         {
             driver->clearPixel(x, y);
-            driver->update();
-            nanosleep(&t, NULL);
         }
     }
-    for (size_t y = 0; y < driver->ROWS; y++)
+    driver->update();
+    for (int i = 0; i < 3; i++)
     {
-        for (size_t x = 1 - (y % 2); x < driver->COLUMNS; x += 2)
+        nanosleep(&delay, NULL);
+        for (size_t y = 0; y < driver->ROWS; y++)
         {
-            driver->clearPixel(x, y);
-            driver->update();
-            nanosleep(&t, NULL);
+            for (size_t x = 0; x < driver->COLUMNS; x++)
+            {
+                driver->togglePixel(x, y);
+            }
         }
+        driver->update();
     }
+    
+    nanosleep(&delay, NULL);
+    driver->clearAllPixels();
+    driver->update();
+    DBG_PRINTF("Done testing, exit in 1 second.\n");
+    sleep(1);
     
     // Free allocated MatrixDriver
     delete driver;
-    
-    DBG_PRINTF("Done testing, exit in 1 second.\n");
-    sleep(1);
     
     exit(EXIT_SUCCESS);
 }
