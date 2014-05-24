@@ -6,7 +6,9 @@ CXXFLAGS = -Wall -Werror
 CC = <none>
 CFLAGS = <none>
 
-OBJECTS = matrix.o matrix-debug.o matrix-driver.o matrix-driver-console.o
+OBJECTS = matrix.o matrix-debug.o matrix-driver.o matrix-driver-console.o \
+	matrix-controller.o
+
 EXECUTABLE = led_matrix
 
 #default: clean

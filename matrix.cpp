@@ -6,6 +6,7 @@
 #include "matrix-debug.h"
 #include "matrix-driver.h"
 #include "matrix-driver-console.h"
+#include "matrix-controller.h"
 
 #define PROGRAM_NAME ("led_matrix")
 
@@ -58,8 +59,11 @@ int main (int argc, char * argv[])
         DBG_PRINTF("Matrix control not implemented, use -e.\n");
         exit(EXIT_FAILURE);
     }
-    
     DBG_PRINTF("Created driver.\n");
+    
+    // Create matrix controller
+    MatrixController controller = MatrixController(driver);
+    DBG_PRINTF("Created controller.\n");
     
     DBG_PRINTF("Testing pixels.\n");
     
@@ -100,9 +104,10 @@ int main (int argc, char * argv[])
         driver->update();
     }
     
+    // Clear all pixels to end the test
     nanosleep(&delay, NULL);
-    driver->clearAllPixels();
-    driver->update();
+    controller.enterIdle();
+    controller.update();
     DBG_PRINTF("Done testing, exit in 1 second.\n");
     sleep(1);
     

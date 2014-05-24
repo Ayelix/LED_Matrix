@@ -15,6 +15,9 @@ public:
     
     // Create and initialize MatrixDriver
     MatrixDriver();
+    // Virtual destructor as recommended by:
+    // http://stackoverflow.com/a/318137
+    virtual ~MatrixDriver();
     
     // Set pixel states (true/set = on, false/clear = off)
     // Setters do not update the actual matrix!
@@ -31,10 +34,6 @@ public:
     
     // Update the actual matrix state
     virtual void update() = 0;
-    
-    // Virtual destructor as recommended by:
-    // http://stackoverflow.com/a/318137
-    virtual ~MatrixDriver();
 
 protected:
     // Flag to indicate if the state has changed since it was last displayed
