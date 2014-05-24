@@ -24,7 +24,9 @@ void DBG_INIT()
 
     // Setup ncurses mode
     initscr();
-    scrollok(stdscr, true);
+    scrollok(stdscr, TRUE);
+    nodelay(stdscr, TRUE);
+    noecho();
     atexit(DBG_endwin);
     DBG_PRINTF("Debug mode initialized.  Log file is \"%s\".\n", DBG_LOGFILE_NAME);
 }

@@ -106,10 +106,33 @@ int main (int argc, char * argv[])
     
     // Clear all pixels to end the test
     nanosleep(&delay, NULL);
-    controller.enterIdle();
-    controller.update();
-    DBG_PRINTF("Done testing, exit in 1 second.\n");
+    DBG_PRINTF("Done testing, starting main loop in 1 second.\n");
     sleep(1);
+    
+    controller.enterIdleMode();
+    DBG_PRINTF("Type q to quit, any other key to change mode.\n");
+    
+    // Main loop
+    int typedCh = ERR;
+    while (true)
+    {
+        // Run controller's update method to progress current animation
+        controller.update();
+        
+        // Check for key press
+        if (ERR != (typedCh = getch()))
+        {
+            if ('q' == typedCh)
+            {
+                DBG_PRINTF("q key pressed, exiting main loop.\n");
+                break;
+            }
+            else
+            {
+                controller.nextMode();
+            }
+        }
+    }
     
     // Free allocated MatrixDriver
     delete driver;
