@@ -1,5 +1,7 @@
 #include "matrix-controller.h"
 
+#include <time.h>
+
 #include "matrix-debug.h"
 
 const std::string MatrixController::TEXT_DEFAULT = "Text Mode";
@@ -26,12 +28,27 @@ void MatrixController::update()
     
     case MATRIX_CONTROLLER_MODE_TEXT:
     {
-        static bool printed = false;
-        if (!printed)
+        static time_t lastUpdateTime = time(NULL);
+        static size_t textCol = 0;
+        
+        time_t curTime = time(NULL);
+        if (difftime(curTime, lastUpdateTime) >= 0.2)
         {
-            DBG_PRINTF("Text mode not implemented.\n");
-            printed = true;
+            lastUpdateTime = curTime;
+            
+            driver->clearAllPixels();
+            FontChar const * const fontChar = getFontChar('A');
+            for (size_t col = 0; col < fontChar->width; col++)
+            {
+                const size_t curCol = (col + textCol) % driver->COLUMNS;
+                writeCharacterColumn(fontChar->data[col], curCol);
+            }
+            driver->update();
+        
+            textCol++;
+            if (textCol >= driver->COLUMNS) textCol = 0;
         }
+        
         break;
     }
     
@@ -125,5 +142,18 @@ void MatrixController::enterMode(ControllerMode mode)
         enterIdleMode();
         break;
     }
+    }
+}
+
+void MatrixController::writeCharacterColumn(uint16_t columnValue, size_t col)
+{
+    // Iterate through each pixel value.  Pixels are stored with the MSB as the
+    // top pixel, but this loop goes through it from the LSB (bottom).
+    for (int row = 15; row >= 0; row--)
+    {
+        // Write the current pixel value
+        bool pixelVal = (columnValue & 0x01);
+        driver->assignPixel(col, row, pixelVal);
+        columnValue >>= 1;
     }
 }

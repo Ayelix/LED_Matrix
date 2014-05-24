@@ -1,13 +1,13 @@
 # Makefile to build LED_Matrix
 
 CXX = g++
-CXXFLAGS = -Wall -Werror
+CXXFLAGS = -Wall -Werror -std=gnu++0x
 # Prevent accidental build of C code
 CC = <none>
 CFLAGS = <none>
 
 OBJECTS = matrix.o matrix-debug.o matrix-driver.o matrix-driver-console.o \
-	matrix-controller.o
+	matrix-controller.o matrix-font.o
 
 EXECUTABLE = led_matrix
 

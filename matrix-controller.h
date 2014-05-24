@@ -5,6 +5,7 @@
 #define _MATRIX_CONTROLLER_H
 
 #include "matrix-driver.h"
+#include "matrix-font.h"
 
 #include <string>
 
@@ -64,10 +65,13 @@ private:
     void enterMode(ControllerMode mode);
     
     /***************************************************************************
-     * Text mode data members
+     * Text mode private members
      **************************************************************************/
     static const std::string TEXT_DEFAULT;
     std::string scrollingText;
+    // Helper function to write one column of pixels (from a font character) at
+    // the given column.
+    void writeCharacterColumn(uint16_t columnValue, size_t col);
 };
 
 #endif
