@@ -186,7 +186,7 @@ void MatrixController::writeCharacterColumn(uint16_t columnValue, size_t col)
 {
     // Iterate through each pixel value.  Pixels are stored with the MSB as the
     // top pixel, but this loop goes through it from the LSB (bottom).
-    for (int row = 15; row >= 0; row--)
+    for (int row = font_height - 1; row >= 0; row--)
     {
         // Write the current pixel value
         bool pixelVal = (columnValue & 0x01);

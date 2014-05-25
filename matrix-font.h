@@ -21,6 +21,9 @@ typedef struct
     std::vector<uint16_t> const data;
 } FontChar;
 
+// Height of the tallest character in the font
+extern size_t const font_height;
+
 // Array containing all supported characters.
 extern FontChar const font[];
 

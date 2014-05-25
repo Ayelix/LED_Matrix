@@ -73,14 +73,15 @@ clear parsed_xml original_num_entries
 
 % Create C output and line image
 file = fopen(output_name, 'w');
-line_image = false(font_size, 1);
-col_start = 1 + font_height - font_size;
+line_image = false(font_height, 1);
+col_start = 1;% + font_height - font_size;
 % Write start of array definition
 code_prev = chars(1).code - 1;
 %{
 fprintf(file, '/* ASCII code of first character, used to convert ASCII code to array index. */\n');
 fprintf(file, 'const char FONT_INDEX_START = ''%c'';\n\n', code_prev + 1);
 %}
+fprintf(file, 'size_t const font_height = %d;\n\n', font_height);
 fprintf(file, 'FontChar const font[] = {\n');
 for i = 1:num_entries
     % Warning if codes are not sequential
@@ -91,7 +92,7 @@ for i = 1:num_entries
             code);
     end
     
-    line_image = [line_image, chars(i).image(col_start:end, :), false(font_size, 1)];
+    line_image = [line_image, chars(i).image(col_start:end, :), false(font_height, 1)];
     
     % Write the character code and beginning of the data
     if ( (code == '''') || (code == '\') )
