@@ -5,16 +5,17 @@
 #include "matrix-debug.h"
 #include "matrix-timer.h"
 
-const std::string MatrixController::TEXT_DEFAULT = "Text Mode";
-const long int MatrixController::TEXT_SCROLL_DELAY_MS = 100;
+std::string const MatrixController::TEXT_DEFAULT = "Text mode! ";
+long int const MatrixController::TEXT_SCROLL_DELAY_MS = 50;
 
 MatrixController::MatrixController(MatrixDriver * const driver)
-: driver(driver),
-  // Text mode data members
-  scrollingText(TEXT_DEFAULT)
+: driver(driver)
 {
     // Begin in idle mode
     enterIdleMode();
+    
+    // Initialize text mode string
+    setText(TEXT_DEFAULT);
 }
 
 void MatrixController::update()
@@ -30,23 +31,53 @@ void MatrixController::update()
     
     case MATRIX_CONTROLLER_MODE_TEXT:
     {
-        static size_t textCol = 0;
-        
         if (MatrixTimer::checkTimer())
         {
             MatrixTimer::startTimer(TEXT_SCROLL_DELAY_MS);
             
-            driver->clearAllPixels();
-            FontChar const * const fontChar = getFontChar('A');
-            for (size_t col = 0; col < fontChar->width; col++)
+            // Shift the matrix contents left to scroll the text
+            driver->shiftLeftAllPixels();
+            
+            // Entire string has not been displayed
+            if (scrollingTextPosition < scrollingText.end())
             {
-                const size_t curCol = (col + textCol) % driver->COLUMNS;
-                writeCharacterColumn(fontChar->data[col], curCol);
+                // Get the current character data
+                FontChar const * const currentChar =
+                    getFontChar(*scrollingTextPosition);
+                
+                // Character is not fully displayed yet
+                if (currentCharPosition < currentChar->width)
+                {
+                    // Display the current column
+                    writeCharacterColumn(currentChar->data[currentCharPosition],
+                        driver->COLUMNS - 1);
+                    // Move the current position to the next column
+                    currentCharPosition++;
+                }
+                // Character is fully displayed
+                else
+                {
+                    // Reset current character position for the next character
+                    currentCharPosition = 0;
+                    
+                    // Move to the next character
+                    scrollingTextPosition++;
+                    
+                    // Don't write anything to the rightmost column, let it be
+                    // a separator between characters.
+                }
             }
+            // Entire string has been displayed
+            else
+            {
+                // Reset string position to the beginning
+                scrollingTextPosition = scrollingText.begin();
+                    
+                // Don't write anything to the rightmost column, let it be
+                // a separator between the end and start of the string.
+            }
+            
             driver->update();
-        
-            textCol++;
-            if (textCol >= driver->COLUMNS) textCol = 0;
         }
         
         break;
@@ -90,7 +121,7 @@ void MatrixController::enterIdleMode()
  * Text mode methods
  ******************************************************************************/
 
-void MatrixController::enterTextMode(const std::string & text)
+void MatrixController::enterTextMode(std::string const & text)
 {
     // Update the current text then call the no-parameter version
     setText(text);
@@ -102,6 +133,9 @@ void MatrixController::enterTextMode()
     // Turn off all pixels and update driver
     driver->clearAllPixels();
     driver->update();
+    // Reset the text position
+    scrollingTextPosition = scrollingText.begin();
+    currentCharPosition = 0;
     // Start the scroll timer
     MatrixTimer::startTimer(TEXT_SCROLL_DELAY_MS);
     // Update the mode
@@ -110,9 +144,10 @@ void MatrixController::enterTextMode()
         scrollingText.c_str());
 }
 
-void MatrixController::setText(const std::string & text)
+void MatrixController::setText(std::string const & text)
 {
-    scrollingText = text;
+    // Append a space at the end to add space when scrolling restarts
+    scrollingText = text + ' ';
     // If currently in text mode, reset the mode to present the new text
     if (MATRIX_CONTROLLER_MODE_TEXT == mode)
     {

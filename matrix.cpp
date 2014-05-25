@@ -99,9 +99,9 @@ int main (int argc, char * argv[])
             }
         }
         driver->update();
+        nanosleep(&delay, NULL);
         for (int i = 0; i < 3; i++)
         {
-            nanosleep(&delay, NULL);
             for (size_t y = 0; y < driver->ROWS; y++)
             {
                 for (size_t x = 0; x < driver->COLUMNS; x++)
@@ -110,16 +110,33 @@ int main (int argc, char * argv[])
                 }
             }
             driver->update();
+            nanosleep(&delay, NULL);
         }
         
-        // Clear all pixels to end the test
-        nanosleep(&delay, NULL);
+        // Shift all pixels out to the left
+        delay.tv_nsec /= 10;
+        for (size_t i = 0; i < driver->COLUMNS; i++)
+        {
+            driver->shiftLeftAllPixels();
+            driver->update();
+            nanosleep(&delay, NULL);
+        }
+        
         DBG_PRINTF("Done testing, starting main loop in 1 second.\n");
         sleep(1);
     }
     
     controller.enterIdleMode();
     DBG_PRINTF("Type q to quit, any other key to change mode.\n");
+    
+    // Build a test string containing all characters in the font
+    std::string testString = std::string();
+    for (char c = ' '; c <= '~'; c++)
+    {
+        testString += c;
+    }
+    testString += ' ';
+    controller.setText(testString);
     
     // Main loop
     int typedCh = ERR;

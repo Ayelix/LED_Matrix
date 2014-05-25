@@ -25,6 +25,7 @@ public:
     void clearPixel(size_t col, size_t row);
     void assignPixel(size_t col, size_t row, bool value);
     void togglePixel(size_t col, size_t row);
+    void shiftLeftAllPixels();
     void clearAllPixels();
     
     // Get current pixel state.  Return value is based on the last value set for

@@ -48,11 +48,13 @@ public:
      **************************************************************************/
     // Turn off all pixels and enter text mode with or without specifying new
     // text to scroll.  If no text is specified, the last text is used.
-    void enterTextMode(const std::string & text);
+    void enterTextMode(std::string const & text);
     void enterTextMode();
     // Update scrolling text.  If the current mode is not text mode, this will
     // set the text to be used next time text mode is entered.
-    void setText(const std::string & text);
+    // NOTE: it's recommended to add a space at the end of the string to add
+    // space when the string "wraps around."
+    void setText(std::string const & text);
     
 private:
     // MatrixDriver to be used by this controller
@@ -67,9 +69,14 @@ private:
     /***************************************************************************
      * Text mode private members
      **************************************************************************/
-    static const std::string TEXT_DEFAULT;
+    static std::string const TEXT_DEFAULT;
+    static long int const TEXT_SCROLL_DELAY_MS;
+    // Text to scroll across the matrix
     std::string scrollingText;
-    static const long int TEXT_SCROLL_DELAY_MS;
+    // Current character entering the matrix
+    std::string::const_iterator scrollingTextPosition;
+    // Current column entering the matrix of the current character
+    size_t currentCharPosition;
     // Helper function to write one column of pixels (from a font character) at
     // the given column.
     void writeCharacterColumn(uint16_t columnValue, size_t col);

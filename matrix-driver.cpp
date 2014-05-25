@@ -45,6 +45,16 @@ void MatrixDriver::togglePixel(size_t col, size_t row)
     assignPixel(col, row, !matrix[col][row]);
 }
 
+void MatrixDriver::shiftLeftAllPixels()
+{
+    // Copy columns 1 to the end into the location of column 0
+    memmove(&matrix[0][0], &matrix[1][0],
+        (COLUMNS - 1) * ROWS * sizeof(matrix[0][0]));
+    // Clear the rightmost column
+    memset(&matrix[COLUMNS-1][0], 0, ROWS * sizeof(matrix[0][0]));
+    stateChanged = true;
+}
+
 void MatrixDriver::clearAllPixels()
 {
     memset(matrix, 0, COLUMNS*ROWS*sizeof(matrix[0][0]));
