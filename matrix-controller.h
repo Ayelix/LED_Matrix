@@ -69,6 +69,7 @@ private:
      **************************************************************************/
     static const std::string TEXT_DEFAULT;
     std::string scrollingText;
+    static const long int TEXT_SCROLL_DELAY_MS;
     // Helper function to write one column of pixels (from a font character) at
     // the given column.
     void writeCharacterColumn(uint16_t columnValue, size_t col);

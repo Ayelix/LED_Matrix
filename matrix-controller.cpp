@@ -3,8 +3,10 @@
 #include <time.h>
 
 #include "matrix-debug.h"
+#include "matrix-timer.h"
 
 const std::string MatrixController::TEXT_DEFAULT = "Text Mode";
+const long int MatrixController::TEXT_SCROLL_DELAY_MS = 100;
 
 MatrixController::MatrixController(MatrixDriver * const driver)
 : driver(driver),
@@ -28,13 +30,11 @@ void MatrixController::update()
     
     case MATRIX_CONTROLLER_MODE_TEXT:
     {
-        static time_t lastUpdateTime = time(NULL);
         static size_t textCol = 0;
         
-        time_t curTime = time(NULL);
-        if (difftime(curTime, lastUpdateTime) >= 0.2)
+        if (MatrixTimer::checkTimer())
         {
-            lastUpdateTime = curTime;
+            MatrixTimer::startTimer(TEXT_SCROLL_DELAY_MS);
             
             driver->clearAllPixels();
             FontChar const * const fontChar = getFontChar('A');
@@ -99,10 +99,12 @@ void MatrixController::enterTextMode(const std::string & text)
 
 void MatrixController::enterTextMode()
 {
-    // Turn off all pixels, update driver, and update the current mode so the
-    // matrix is ready to begin scrolling text.
+    // Turn off all pixels and update driver
     driver->clearAllPixels();
     driver->update();
+    // Start the scroll timer
+    MatrixTimer::startTimer(TEXT_SCROLL_DELAY_MS);
+    // Update the mode
     mode = MATRIX_CONTROLLER_MODE_TEXT;
     DBG_PRINTF("Entered mode: text, current text \"%s\".\n",
         scrollingText.c_str());
