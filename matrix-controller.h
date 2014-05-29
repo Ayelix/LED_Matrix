@@ -19,6 +19,8 @@ public:
         MATRIX_CONTROLLER_MODE_IDLE,
         // Scrolling text mode
         MATRIX_CONTROLLER_MODE_TEXT,
+        // VU meter mode
+        MATRIX_CONTROLLER_MODE_VU,
         
         // Add new modes above this line so the count stays correct.
         MATRIX_CONTROLLER_MODE_COUNT
@@ -56,6 +58,12 @@ public:
     // space when the string "wraps around."
     void setText(std::string const & text);
     
+    /***************************************************************************
+     * VU meter mode methods
+     **************************************************************************/
+    // Turn off all pixels and enter VU meter mode
+    void enterVUMode();
+    
 private:
     // MatrixDriver to be used by this controller
     MatrixDriver * const driver;
@@ -77,9 +85,33 @@ private:
     std::string::const_iterator scrollingTextPosition;
     // Current column entering the matrix of the current character
     size_t currentCharPosition;
-    // Helper function to write one column of pixels (from a font character) at
-    // the given column.
+    // Update text mode animation
+    void updateTextMode();
+    
+    /***************************************************************************
+     * VU meter mode private members
+     **************************************************************************/
+    static long int const VU_UPDATE_DELAY_MS;
+    // Update VU meter mode animation
+    void updateVUMode();
+    
+    /***************************************************************************
+     * Misc helper methods
+     **************************************************************************/
+    // Write one column of pixels (from a font character) at the given column.
     void writeCharacterColumn(uint16_t columnValue, size_t col);
+    // Plot the given level (normalized to 0-100) on the matrix
+    typedef enum
+    {
+        // Bar-graph type plot going from bottom to top
+        MATRIX_CONTROLLER_PLOT_TYPE_VERTICAL,
+        // Bar-graph type plot going from left to right
+        MATRIX_CONTROLLER_PLOT_TYPE_HORIZONTAL,
+        
+        MATRIX_CONTROLLER_PLOT_TYPE_COUNT
+    } PlotType;
+    void plotLevel(unsigned int level,
+        PlotType type = MATRIX_CONTROLLER_PLOT_TYPE_VERTICAL);
 };
 
 #endif
