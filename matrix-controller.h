@@ -21,6 +21,8 @@ public:
         MATRIX_CONTROLLER_MODE_TEXT,
         // VU meter mode
         MATRIX_CONTROLLER_MODE_VU,
+        // Sine wave mode
+        MATRIX_CONTROLLER_MODE_SINE,
         
         // Add new modes above this line so the count stays correct.
         MATRIX_CONTROLLER_MODE_COUNT
@@ -48,8 +50,8 @@ public:
     /***************************************************************************
      * Text mode methods
      **************************************************************************/
-    // Turn off all pixels and enter text mode with or without specifying new
-    // text to scroll.  If no text is specified, the last text is used.
+    // Enter text mode with or without specifying new text to scroll.
+    // If no text is specified, the last set text is used.
     void enterTextMode(std::string const & text);
     void enterTextMode();
     // Update scrolling text.  If the current mode is not text mode, this will
@@ -61,8 +63,12 @@ public:
     /***************************************************************************
      * VU meter mode methods
      **************************************************************************/
-    // Turn off all pixels and enter VU meter mode
     void enterVUMode();
+    
+    /***************************************************************************
+     * VU meter mode methods
+     **************************************************************************/
+    void enterSineMode();
     
 private:
     // MatrixDriver to be used by this controller
@@ -73,6 +79,10 @@ private:
     
     // Update current state.  Calls the appropriate enter*Mode() method.
     void enterMode(ControllerMode mode);
+    
+    // Default delay used in update*Mode methods which don't require a different
+    // delay
+    static long int const ANIMATION_DELAY_MS;
     
     /***************************************************************************
      * Text mode private members
@@ -85,33 +95,40 @@ private:
     std::string::const_iterator scrollingTextPosition;
     // Current column entering the matrix of the current character
     size_t currentCharPosition;
-    // Update text mode animation
     void updateTextMode();
     
     /***************************************************************************
      * VU meter mode private members
      **************************************************************************/
     static long int const VU_UPDATE_DELAY_MS;
-    // Update VU meter mode animation
     void updateVUMode();
+    
+    /***************************************************************************
+     * Sine wave mode private members
+     **************************************************************************/
+    void updateSineMode();
     
     /***************************************************************************
      * Misc helper methods
      **************************************************************************/
     // Write one column of pixels (from a font character) at the given column.
     void writeCharacterColumn(uint16_t columnValue, size_t col);
-    // Plot the given level (normalized to 0-100) on the matrix
+    // Plot the given level (normalized to 0-100) on the matrix, using the given
+    // plot type/style and optionally filling all points below the given level.
     typedef enum
     {
         // Bar-graph type plot going from bottom to top
         MATRIX_CONTROLLER_PLOT_TYPE_VERTICAL,
         // Bar-graph type plot going from left to right
         MATRIX_CONTROLLER_PLOT_TYPE_HORIZONTAL,
+        // Shift matrix left and plot the new level on the rightmost column
+        MATRIX_CONTROLLER_PLOT_TYPE_SHIFTING,
         
         MATRIX_CONTROLLER_PLOT_TYPE_COUNT
     } PlotType;
     void plotLevel(unsigned int level,
-        PlotType type = MATRIX_CONTROLLER_PLOT_TYPE_VERTICAL);
+        PlotType type = MATRIX_CONTROLLER_PLOT_TYPE_VERTICAL,
+        bool fill = false);
 };
 
 #endif

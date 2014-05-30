@@ -5,9 +5,10 @@
 #include "matrix-debug.h"
 #include "matrix-timer.h"
 
+long int const MatrixController::ANIMATION_DELAY_MS = 25;
 std::string const MatrixController::TEXT_DEFAULT = "Text mode! ";
 long int const MatrixController::TEXT_SCROLL_DELAY_MS = 50;
-long int const MatrixController::VU_UPDATE_DELAY_MS = 10;
+long int const MatrixController::VU_UPDATE_DELAY_MS = 5;
 
 MatrixController::MatrixController(MatrixDriver * const driver)
 : driver(driver)
@@ -43,6 +44,12 @@ void MatrixController::update()
     case MATRIX_CONTROLLER_MODE_VU:
     {
         updateVUMode();
+        break;
+    }
+    
+    case MATRIX_CONTROLLER_MODE_SINE:
+    {
+        updateSineMode();
         break;
     }
     
@@ -86,6 +93,12 @@ void MatrixController::enterMode(ControllerMode mode)
     case MATRIX_CONTROLLER_MODE_VU:
     {
         enterVUMode();
+        break;
+    }
+    
+    case MATRIX_CONTROLLER_MODE_SINE:
+    {
+        enterSineMode();
         break;
     }
     
@@ -224,22 +237,73 @@ void MatrixController::updateVUMode()
     {
         MatrixTimer::startTimer(VU_UPDATE_DELAY_MS);
         
-        static unsigned int level = 0;
-        static PlotType type = MATRIX_CONTROLLER_PLOT_TYPE_VERTICAL;
-        
-        level++;
-        if (level > 100)
+        static bool msgPrinted = false;
+        if (!msgPrinted)
         {
-            level = 0;
-            int intType = static_cast<int>(type) + 1;
-            if (intType >= MATRIX_CONTROLLER_PLOT_TYPE_COUNT)
-            {
-                intType = 0;
-            }
-            type = static_cast<PlotType>(intType);
+            DBG_PRINTF("VU Mode not implemented.  Demo will cycle through """
+                "available VU level display types.\n");
+            msgPrinted = true;
         }
         
-        plotLevel(level, type);
+        static unsigned int level = 0;
+        static int incr = 1;
+        static bool fill = false;
+        static PlotType type = MATRIX_CONTROLLER_PLOT_TYPE_VERTICAL;
+        
+        level += incr;
+        if (level >= 100 || level <= 0)
+        {
+            incr = -incr;
+            if (incr > 0)
+            {
+                int intType = static_cast<int>(type) + 1;
+                if (intType >= MATRIX_CONTROLLER_PLOT_TYPE_COUNT)
+                {
+                    fill = !fill;
+                    intType = 0;
+                }
+                type = static_cast<PlotType>(intType);
+            }
+        }
+        
+        plotLevel(level, type, fill);
+    }
+}
+
+/*******************************************************************************
+ * Sine mode methods
+ ******************************************************************************/
+void MatrixController::enterSineMode()
+{
+    // Turn off all pixels and update driver
+    driver->clearAllPixels();
+    driver->update();
+    // Start the update timer
+    MatrixTimer::startTimer(ANIMATION_DELAY_MS);
+    // Update the mode
+    mode = MATRIX_CONTROLLER_MODE_SINE;
+    DBG_PRINTF("Entered mode: sine.\n");
+}
+
+void MatrixController::updateSineMode()
+{
+    if (MatrixTimer::checkTimer())
+    {
+        MatrixTimer::startTimer(ANIMATION_DELAY_MS);
+        
+        static unsigned int x = 0;
+        static bool fill = false;
+        
+        x += 5;
+        if (x > 360)
+        {
+            fill = !fill;
+            x = 0;
+        }
+        
+        // Get the sine value in the range 0-100 rounded to an integer
+        unsigned int const level = round( (sin(x*M_PI/180) + 1.0) * 50.0 );
+        plotLevel(level, MATRIX_CONTROLLER_PLOT_TYPE_SHIFTING);
     }
 }
 
@@ -259,41 +323,57 @@ void MatrixController::writeCharacterColumn(uint16_t columnValue, size_t col)
     }
 }
 
-void MatrixController::plotLevel(unsigned int level, PlotType type)
+void MatrixController::plotLevel(unsigned int level, PlotType type, bool fill)
 {
+    // Coordinates for the rectangle which represents the plotted point.
+    // Maximums are not inclusive, i.e. they must be 1 greater than the target.
+    size_t col_min = 0, col_max = 0;
+    size_t row_min = 0, row_max = 0;
+    
     switch (type)
     {
     case MATRIX_CONTROLLER_PLOT_TYPE_VERTICAL:
     {
-        // Scale the level to get the number of rows to turn on
-        level = round((double)(level * driver->ROWS) / 100.0);
-        
-        // Turn on the approriate rows
+        // Scale the level to get the row to turn on
+        level = round((double)(level * (driver->ROWS - 2)) / 100.0);
+        level = driver->ROWS - 2 - level;
+        // Calculate the min/max values
+        col_min = 0;
+        col_max = driver->COLUMNS;
+        row_min = level;
+        row_max = (fill) ? (driver->ROWS) : (row_min + 2);
+        // Clear all other pixels for this plot type
         driver->clearAllPixels();
-        for (size_t row = (driver->ROWS - level); row < driver->ROWS; row++)
-        {
-            for (size_t col = 0; col < driver->COLUMNS; col++)
-            {
-                driver->setPixel(col, row);
-            }
-        }
         break;
     }
     
     case MATRIX_CONTROLLER_PLOT_TYPE_HORIZONTAL:
     {
-        // Scale the level to get the number of columns to turn on
-        level = round((double)(level * driver->COLUMNS) / 100.0);
-        
-        // Turn on the approriate columns
+        // Scale the level to get the column to turn on
+        level = round((double)(level * (driver->COLUMNS - 2)) / 100.0);
+        //level = driver->COLUMNS - 2 - level;
+        // Calculate the min/max values
+        col_min = (fill) ? (0) : (level);
+        col_max = level + 2;
+        row_min = 0;
+        row_max = driver->ROWS;
+        // Clear all other pixels for this plot type
         driver->clearAllPixels();
-        for (size_t col = 0; col < level; col++)
-        {
-            for (size_t row = 0; row < driver->ROWS; row++)
-            {
-                driver->setPixel(col, row);
-            }
-        }
+        break;
+    }
+    
+    case MATRIX_CONTROLLER_PLOT_TYPE_SHIFTING:
+    {
+        // Scale the level to get the row to turn on
+        level = round((double)(level * (driver->ROWS - 2)) / 100.0);
+        level = driver->ROWS - 2 - level;
+        // Calculate the min/max values
+        col_min = driver->COLUMNS - 1;
+        col_max = col_min + 1;
+        row_min = level;
+        row_max = (fill) ? (driver->ROWS) : (row_min + 2);
+        // Shift all other pixels for this plot type
+        driver->shiftLeftAllPixels();
         break;
     }
     
@@ -302,6 +382,15 @@ void MatrixController::plotLevel(unsigned int level, PlotType type)
         DBG_PRINTF("Invalid plot type in MatrixController::plotLevel(%d, %d).\n",
             level, type);
     }
+    }
+    
+    // Set the pixels according to the coordinates set above
+    for (size_t row = row_min; row < row_max; row++)
+    {
+        for (size_t col = col_min; col < col_max; col++)
+        {
+            driver->setPixel(col, row);
+        }
     }
     
     driver->update();

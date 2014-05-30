@@ -124,25 +124,25 @@ int main (int argc, char * argv[])
         
         DBG_PRINTF("Done testing, starting main loop in 1 second.\n");
         sleep(1);
+    
+        // Build a test string containing all characters in the font
+        std::string testString = std::string();
+        for (char c = ' '; c <= '~'; c++)
+        {
+            testString += c;
+        }
+        testString += ' ';
+        controller.setText(testString);
     }
     
     controller.enterIdleMode();
     DBG_PRINTF("Type q to quit, any other key to change mode.\n");
     
-    // Build a test string containing all characters in the font
-    std::string testString = std::string();
-    for (char c = ' '; c <= '~'; c++)
-    {
-        testString += c;
-    }
-    testString += ' ';
-    controller.setText(testString);
-    
     // Main loop
     int typedCh = ERR;
     struct timespec delay;
     delay.tv_sec = 0;
-    delay.tv_nsec = 5000000;
+    delay.tv_nsec = 1000000;
     while (true)
     {
         // Run controller's update method to progress current animation
