@@ -1,0 +1,5 @@
+- Clone git repo:
+  git clone https://github.com/Ayelix/LED_Matrix.git
+
+- Install ncurses development tools:
+  sudo apt-get install libncurses-dev ncurses-doc
