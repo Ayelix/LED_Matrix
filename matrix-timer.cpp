@@ -12,7 +12,7 @@ namespace MatrixTimer
     namespace
     {
         bool timerInitialized = false;
-        std::atomic<bool> timerFlag;
+        volatile bool timerFlag;
         
         void sigalrmHandler(int signum)
         {
