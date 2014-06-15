@@ -1,5 +1,9 @@
 #include "matrix-font.h"
 
+// Update these if the fonts cover more characters
+char const font_min = ' ';
+char const font_max = '~';
+
 #define FONT 1
 
 #if FONT == 1

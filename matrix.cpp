@@ -136,7 +136,10 @@ int main (int argc, char * argv[])
     }
     
     controller.enterIdleMode();
-    DBG_PRINTF("Type q to quit, any other key to change mode.\n");
+    DBG_PRINTF("\nThe following options are available:\n");
+    DBG_PRINTF("  q: quit\n");
+    DBG_PRINTF("  t: update text mode string\n");
+    DBG_PRINTF("Press any other key to change mode.\n\n");
     
     // Main loop
     int typedCh = ERR;
@@ -155,6 +158,25 @@ int main (int argc, char * argv[])
             {
                 DBG_PRINTF("q key pressed, exiting main loop.\n");
                 break;
+            }
+            else if ('t' == typedCh)
+            {
+                DBG_PRINTF("Enter string to use in text mode:\n");
+                echo();
+                nodelay(stdscr, FALSE);
+                curs_set(1);
+                char text[256];
+                if (ERR != getnstr(text, 256))
+                {
+                    controller.setText(text);
+                }
+                else
+                {
+                    DBG_PRINTF("\nError reading input string, try again.\n");
+                }
+                noecho();
+                nodelay(stdscr, TRUE);
+                curs_set(0);
             }
             else
             {

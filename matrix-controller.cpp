@@ -153,10 +153,30 @@ void MatrixController::enterTextMode()
         scrollingText.c_str());
 }
 
-void MatrixController::setText(std::string const & text)
+void MatrixController::setText(std::string text)
 {
+    // Verify the input string
+    std::string::iterator i = text.begin();
+    while (i != text.end())
+    {
+        if ( (*i < font_min) || (*i > font_max))
+        {
+            DBG_PRINTF("MatrixController::setText(): removing illegal character %c from input string.\n",
+                *i);
+            i = text.erase(i);
+        }
+        else
+        {
+            i++;
+        }
+    }
+    
     // Append a space at the end to add space when scrolling restarts
     scrollingText = text + ' ';
+    
+    DBG_PRINTF("Updated text mode string: \"%s\".\n",
+        scrollingText.c_str());
+    
     // If currently in text mode, reset the mode to present the new text
     if (MATRIX_CONTROLLER_MODE_TEXT == mode)
     {

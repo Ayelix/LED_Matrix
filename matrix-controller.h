@@ -58,7 +58,7 @@ public:
     // set the text to be used next time text mode is entered.
     // NOTE: it's recommended to add a space at the end of the string to add
     // space when the string "wraps around."
-    void setText(std::string const & text);
+    void setText(std::string text);
     
     /***************************************************************************
      * VU meter mode methods

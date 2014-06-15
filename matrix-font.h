@@ -24,6 +24,10 @@ typedef struct
 // Height of the tallest character in the font
 extern size_t const font_height;
 
+// Range of characters included in the font (inclusive)
+extern char const font_min;
+extern char const font_max;
+
 // Array containing all supported characters.
 extern FontChar const font[];
 

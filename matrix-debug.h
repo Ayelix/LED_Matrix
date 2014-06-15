@@ -15,7 +15,7 @@ extern FILE *DBG_logfile;
 extern void DBG_INIT();
 #define DBG_PRINTF(...) {printw(__VA_ARGS__); refresh(); \
                         fprintf(DBG_logfile, __VA_ARGS__);}
-
+                        
 #else
 #define DBG_INIT(...)
 #define DBG_PRINTF(...) 
