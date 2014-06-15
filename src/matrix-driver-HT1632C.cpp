@@ -23,7 +23,7 @@ MatrixDriverHT1632C::MatrixDriverHT1632C()
     //SPI_MODE_1 (0,1) 	CPOL=0 (Clock Idle low level), CPHA=1 (SDO transmit/change edge idle to active)
     //SPI_MODE_2 (1,0) 	CPOL=1 (Clock Idle high level), CPHA=0 (SDO transmit/change edge active to idle)
     //SPI_MODE_3 (1,1) 	CPOL=1 (Clock Idle high level), CPHA=1 (SDO transmit/change edge idle to active)
-    uint8_t mode = SPI_MODE_0;
+    uint8_t mode = SPI_MODE_3;
     if (-1 == ioctl(spiFd, SPI_IOC_WR_MODE, &mode))
     {
         DBG_PRINTF("MatrixDriverHT1632C::MatrixDriverHT1632C(): unable to set SPI mode.\n");
@@ -63,7 +63,8 @@ MatrixDriverHT1632C::MatrixDriverHT1632C()
     }
     
     // Configure SPI clock speed
-    unsigned int speed = 1000000; //1000000 = 1MHz
+    // TODO: increase clock speed (it's slowed down for the slow oscilloscope)
+    unsigned int speed = 10000; //1000000 = 1MHz (HT1632C max)
     if (-1 == ioctl(spiFd, SPI_IOC_WR_MAX_SPEED_HZ, &speed))
     {
         DBG_PRINTF("MatrixDriverHT1632C::MatrixDriverHT1632C(): unable to set SPI clock speed.\n");
@@ -82,7 +83,12 @@ MatrixDriverHT1632C::MatrixDriverHT1632C()
         throw std::system_error(EDOM, std::system_category());
     }
     
-    //TODO: send setup commands to HT1632C
+    // Initialize the HT1632C
+    sendCommand(HT1632C_CMD_SYS_DIS);
+    sendCommand(HT1632C_CMD_COM_NMOS16);
+    sendCommand(HT1632C_CMD_SYS_EN);
+    //TODO: may need to clear all pixels and update before turning LEDs on
+    sendCommand(HT1632C_CMD_LED_ON);
 }
 
 MatrixDriverHT1632C::~MatrixDriverHT1632C()
@@ -128,5 +134,46 @@ void MatrixDriverHT1632C::update()
     else
     {
         DBG_PRINTF("MatrixDriverHT1632C::update(): stateChanged is false, do nothing.\n");
+    }
+}
+
+void MatrixDriverHT1632C::sendCommand(HT1632C_CMD cmd)
+{
+    // Build the command to send, starting with '100' for the command-mode bits
+    uint16_t completeCommand = 0b1000000000000000;
+    // Add in the command code bits, shifted up to leave the last 4 bits 0
+    completeCommand |= static_cast<uint16_t>(cmd) << 4;
+    // Reverse the endianness before sending
+    reverseEndian(&completeCommand, sizeof(completeCommand));
+    
+    // Send the command
+    if (sizeof(completeCommand) !=
+        write(spiFd, &completeCommand, sizeof(completeCommand)))
+    {
+        DBG_PRINTF("MatrixDriverHT1632C::sendCommand(): unable to write to SPI device.\n");
+        throw std::system_error(EDOM, std::system_category());
+    }
+}
+
+void MatrixDriverHT1632C::reverseEndian(void * const data, size_t const size)
+{
+    if (size % 2 != 0)
+    {
+        DBG_PRINTF("MatrixDriverHT1632C::reverseEndian called with odd size %zu.\n",
+            size);
+    }
+    
+    // Swap each byte from the ends into the middle
+    char * first = (char *) data;
+    char * last = ((char *) data) + size - 1;
+    while (last > first)
+    {
+        // Swap the bytes
+        char swap = *first;
+        *first = *last;
+        *last = swap;
+        // Move pointers towards the middle of the data
+        first++;
+        last--;
     }
 }
