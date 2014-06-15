@@ -55,6 +55,6 @@ void MatrixDriverConsole::update()
     }
     else
     {
-        DBG_PRINTF("update(): stateChanged is false, do nothing.\n");
+        DBG_PRINTF("MatrixDriverConsole::update(): stateChanged is false, do nothing.\n");
     }
 }

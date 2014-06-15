@@ -5,8 +5,7 @@
 
 #include <cstddef>
 #include <vector>
-
-typedef unsigned short int uint16_t;
+#include <cstdint> // for uint16_t
 
 // Structure containing data for a single character as represented in the font.
 typedef struct

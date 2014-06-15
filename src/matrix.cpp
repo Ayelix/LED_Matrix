@@ -2,10 +2,12 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <ctime>
+#include <system_error>
 
 #include "matrix-debug.h"
 #include "matrix-driver.h"
 #include "matrix-driver-console.h"
+#include "matrix-driver-HT1632C.h"
 #include "matrix-controller.h"
 
 #define PROGRAM_NAME ("led_matrix")
@@ -57,13 +59,23 @@ int main (int argc, char * argv[])
     MatrixDriver * driver;
     if (emulate)
     {
-        DBG_PRINTF("Starting in emulation mode.\n");
+        DBG_PRINTF("Starting in emulation driver mode.\n");
         driver = new MatrixDriverConsole();
     }
     else
     {
-        DBG_PRINTF("Matrix control not implemented, use -e.\n");
-        exit(EXIT_FAILURE);
+        DBG_PRINTF("Starting in HT1632C driver mode.\n");
+        try
+        {
+            driver = new MatrixDriverHT1632C();
+        }
+        catch (const std::system_error & error)
+        {
+            DBG_PRINTF("Error: %s:%d - %s\n",
+                error.code().category().name(), error.code().value(),
+                error.code().message().c_str());
+            exit(EXIT_FAILURE);
+        }
     }
     DBG_PRINTF("Created driver.\n");
     

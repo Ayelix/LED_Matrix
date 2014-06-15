@@ -6,8 +6,10 @@ CXXFLAGS = -Wall -Werror -std=gnu++0x
 CC = <none>
 CFLAGS = <none>
 
-OBJECTS = matrix.o matrix-debug.o matrix-driver.o matrix-driver-console.o \
-	matrix-controller.o matrix-font.o matrix-timer.o
+OBJECTS = matrix.o matrix-debug.o \
+	matrix-controller.o \
+	matrix-driver.o matrix-driver-console.o matrix-driver-HT1632C.o \
+	matrix-font.o matrix-timer.o
 
 EXECUTABLE = led_matrix
 
