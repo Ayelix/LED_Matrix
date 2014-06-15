@@ -10,7 +10,7 @@
 MatrixDriverHT1632C::MatrixDriverHT1632C()
 {
     // Open the SPI device for writing
-    spiFd = open("/dev/notadev", O_WRONLY);
+    spiFd = open("/dev/spidev0.0", O_WRONLY);
     if (spiFd < 0)
     {
         DBG_PRINTF("MatrixDriverHT1632C::MatrixDriverHT1632C(): unable to open SPI device.\n");
@@ -43,15 +43,15 @@ MatrixDriverHT1632C::MatrixDriverHT1632C()
     }
     
     // Configure SPI bits per word
-    uint8_t bits;
-    if (-1 == ioctl(spiFc, SPI_IOC_WR_BITS_PER_WORD, &bits)
+    uint8_t bits = 8;
+    if (-1 == ioctl(spiFd, SPI_IOC_WR_BITS_PER_WORD, &bits))
     {
         DBG_PRINTF("MatrixDriverHT1632C::MatrixDriverHT1632C(): unable to set SPI word size.\n");
         throw std::system_error(EDOM, std::system_category());
     }
     // Verify SPI bits per word
     uint8_t bitsResult = 0;
-    if (-1 == ioctl(spiFc, SPI_IOC_RD_BITS_PER_WORD, &bitsResult)
+    if (-1 == ioctl(spiFd, SPI_IOC_RD_BITS_PER_WORD, &bitsResult))
     {
         DBG_PRINTF("MatrixDriverHT1632C::MatrixDriverHT1632C(): unable to get SPI word size.\n");
         throw std::system_error(EDOM, std::system_category());
@@ -64,14 +64,14 @@ MatrixDriverHT1632C::MatrixDriverHT1632C()
     
     // Configure SPI clock speed
     unsigned int speed = 1000000; //1000000 = 1MHz
-    if (-1 == ioctl(spiFc, SPI_IOC_WR_MAX_SPEED_HZ, &speed)
+    if (-1 == ioctl(spiFd, SPI_IOC_WR_MAX_SPEED_HZ, &speed))
     {
         DBG_PRINTF("MatrixDriverHT1632C::MatrixDriverHT1632C(): unable to set SPI clock speed.\n");
         throw std::system_error(EDOM, std::system_category());
     }
     // Verify SPI clock speed
     unsigned int speedResult = 0;
-    if (-1 == ioctl(spiFc, SPI_IOC_RD_MAX_SPEED_HZ, &speedResult)
+    if (-1 == ioctl(spiFd, SPI_IOC_RD_MAX_SPEED_HZ, &speedResult))
     {
         DBG_PRINTF("MatrixDriverHT1632C::MatrixDriverHT1632C(): unable to get SPI clock speed.\n");
         throw std::system_error(EDOM, std::system_category());
