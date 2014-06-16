@@ -66,6 +66,8 @@ namespace MatrixTimer
     
     bool checkTimer()
     {
+        //TODO: if this is not accurate enough, consider changing to a design
+        // based on polling system time every time checkTimer is called.
         return timerFlag;
     }
 }

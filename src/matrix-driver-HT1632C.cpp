@@ -10,7 +10,6 @@
 MatrixDriverHT1632C::MatrixDriverHT1632C()
 {
     // If displayData isn't the size we expect it might be a problem
-    DBG_PRINTF("number of data bytes %zu.\n", HT1632C_NUM_DATA_BYTES);
     if (sizeof(displayData) != HT1632C_NUM_DATA_BYTES)
     {
         DBG_PRINTF("MatrixDriverHT1632C::MatrixDriverHT1632C(): WARNING - display data size mismatch.\n");
@@ -74,8 +73,7 @@ MatrixDriverHT1632C::MatrixDriverHT1632C()
     }
     
     // Configure SPI clock speed
-    // TODO: increase clock speed (it's slowed down for the slow oscilloscope)
-    unsigned int speed = 10000; //1000000 = 1MHz (HT1632C max)
+    unsigned int speed = 488000; //1000000 = 1MHz (HT1632C max)
     if (-1 == ioctl(spiFd, SPI_IOC_WR_MAX_SPEED_HZ, &speed))
     {
         DBG_PRINTF("MatrixDriverHT1632C::MatrixDriverHT1632C(): unable to set SPI clock speed.\n");

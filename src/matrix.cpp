@@ -9,6 +9,7 @@
 #include "matrix-driver-console.h"
 #include "matrix-driver-HT1632C.h"
 #include "matrix-controller.h"
+#include "matrix-font.h"
 
 #define PROGRAM_NAME ("led_matrix")
 
@@ -133,18 +134,18 @@ int main (int argc, char * argv[])
             driver->update();
             nanosleep(&delay, NULL);
         }
-        
-        DBG_PRINTF("Done testing, starting main loop in 1 second.\n");
-        sleep(1);
     
         // Build a test string containing all characters in the font
         std::string testString = std::string();
-        for (char c = ' '; c <= '~'; c++)
+        for (char c = font_min; c <= font_max; c++)
         {
             testString += c;
         }
         testString += ' ';
         controller.setText(testString);
+        
+        DBG_PRINTF("Done testing, starting main loop in 1 second.\n");
+        sleep(1);
     }
     
     controller.enterIdleMode();
