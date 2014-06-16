@@ -2,13 +2,24 @@
 
 #include <fcntl.h>
 #include <sys/ioctl.h>
-#include <cstdint>
 #include <linux/spi/spidev.h>
 #include <cstdio>
 #include <system_error>
+#include <cstring>
 
 MatrixDriverHT1632C::MatrixDriverHT1632C()
 {
+    // If displayData isn't the size we expect it might be a problem
+    DBG_PRINTF("number of data bytes %zu.\n", HT1632C_NUM_DATA_BYTES);
+    if (sizeof(displayData) != HT1632C_NUM_DATA_BYTES)
+    {
+        DBG_PRINTF("MatrixDriverHT1632C::MatrixDriverHT1632C(): WARNING - display data size mismatch.\n");
+    }
+    
+    // Initialize displayData by writing zeros then setting mode bits
+    memset(&displayData, 0, HT1632C_NUM_DATA_BYTES);
+    displayData[0] = 0b10100000;
+    
     // Open the SPI device for writing
     spiFd = open("/dev/spidev0.0", O_WRONLY);
     if (spiFd < 0)
@@ -105,28 +116,44 @@ void MatrixDriverHT1632C::update()
     // Do nothing if the state hasn't changed
     if (stateChanged)
     {
-        //TODO: write to HT1632C display RAM
-        DBG_PRINTF("MatrixDriverHT1632C::update(): not implemented.\n");
-        /*std::string line;
-        line += "----------------------------------------------------\n";
+        // TODO: if this state-copying is too slow, consider overriding the 
+        // state-related methods/members of MatrixDriver.
+        
+        // Update the displayData array to match the new state
+        size_t bitOffset = 2; // Start 2 bits from MSB
+        size_t arrayIndex = 1; // At index 1 of the array
         for (size_t row = 0; row < ROWS; row++)
         {
-            line += "--";
             for (size_t col = 0; col < COLUMNS; col++)
             {
+                // Set or clear the bit corresponding to the pixel
+                uint8_t const bitMask = ((uint8_t) 1) << (8 - bitOffset - 1);
                 if (getPixel(col, row))
                 {
-                    line += "XX";
+                    displayData[arrayIndex] |= bitMask;
                 }
                 else
                 {
-                    line += "  ";
+                    displayData[arrayIndex] &= ~bitMask;
+                }
+                
+                // Move to the next bit
+                bitOffset = (bitOffset + 1) % 8;
+                // Increment the array index if the byte is complete
+                if (0 == bitOffset)
+                {
+                    arrayIndex++;
                 }
             }
-            line += "--\n";
         }
-        line += "----------------------------------------------------\n";
-        DBG_PRINTF(line.c_str());*/
+        
+        // Write the updated display data to the HT1632C
+        if ((ssize_t)HT1632C_NUM_DATA_BYTES !=
+            write(spiFd, &displayData, HT1632C_NUM_DATA_BYTES))
+        {
+            DBG_PRINTF("MatrixDriverHT1632C::update(): unable to write to SPI device.\n");
+            throw std::system_error(EDOM, std::system_category());
+        }
         
         // Reset stateChanged flag now that the matrix has been updated
         stateChanged = false;
