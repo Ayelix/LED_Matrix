@@ -3,11 +3,12 @@
  */
 #ifndef _MATRIX_DRIVER_HT1632C_H
 #define _MATRIX_DRIVER_HT1632C_H
-
-#include <cstdint>
-#include <cmath>
  
 #include "matrix-driver.h"
+
+#include <cmath>
+
+#include "matrix-types.h"
 
 class MatrixDriverHT1632C : public MatrixDriver
 {
@@ -30,6 +31,7 @@ private:
     // 2. Add number of command bits (3) and address bits (7)
     // 4. Divide remaining data bits by 8 to get number of bytes, rounding up
     //    to account for partially-used bytes
+    // Result: ((16*24) + 3 + 7) / 8 = 49.25, round up to 50
     // First byte:      Second byte:
     // MSB - 1          MSB - A1(0)
     //   6 - 0            6 - A0(0)
@@ -39,8 +41,7 @@ private:
     //   2 - A4(0)        2 - D3 (COM3,ROW0)
     //   1 - A3(0)        1 - D0 (COM4,ROW0)
     //   0 - A2(0)        0 - D1 (COM5,ROW0)
-    static size_t const HT1632C_NUM_DATA_BYTES =
-        ceil(((ROWS*COLUMNS) + 3 + 7) / 8.0);
+    static size_t const HT1632C_NUM_DATA_BYTES = 50;
     
     // Array to hold display data sent to the HT1632C
     uint8_t displayData[HT1632C_NUM_DATA_BYTES];

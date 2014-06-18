@@ -1,7 +1,6 @@
 #include "matrix-timer.h"
 
 #include <csignal>
-#include <atomic>
 #include <sys/time.h>
 
 #include "matrix-debug.h"

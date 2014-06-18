@@ -1,5 +1,5 @@
 #include "matrix-debug.h"
-#ifdef DEBUG
+#if defined(MATRIX_DEBUG)
 
 #include <stdlib.h>
 

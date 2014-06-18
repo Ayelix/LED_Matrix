@@ -2,7 +2,10 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <ctime>
-#include <system_error>
+
+#include <string>
+#include <sstream>
+#include <stdexcept>
 
 #include "matrix-debug.h"
 #include "matrix-driver.h"
@@ -10,17 +13,20 @@
 #include "matrix-driver-HT1632C.h"
 #include "matrix-controller.h"
 #include "matrix-font.h"
+#include "webserver/matrix-webserver-launcher.h"
 
-#define PROGRAM_NAME ("led_matrix")
+unsigned int const DEFAULT_PORT = 8080;
 
-static void usage()
+static void usage(char const * const program_name)
 {
-    fprintf(stderr, "Usage: %s [-es]\n"""
+    fprintf(stderr, "usage: %s [-es][-p port_number]\n"""
     "    -e  Enable matrix emulation mode.  In this mode, the LED matrix is emulated\n"""
     "        onscreen instead of driving the actual matrix.\n"""
-    "    -s  Skip startup matrix test.\n"""
+    "    -s  Skip startup tests.\n"""
+    "    -p  Specify the port on which the server will receive incoming connections.\n"""
+    "        Default port: %u.\n"""
     "\n",
-    PROGRAM_NAME);
+    program_name, DEFAULT_PORT);
 }
 
 /* main
@@ -31,25 +37,44 @@ int main (int argc, char * argv[])
     // Default values for options which may be changed with arguments
     bool emulate = false;
     bool runTests = true;
+    unsigned int port = DEFAULT_PORT;
     
     // Parse command-line arguments
     int c;
-    while ((c = getopt(argc, argv, "es")) != -1)
+    while ((c = getopt(argc, argv, "esp:")) != -1)
     {
         switch (c)
         {
         case 'e':
+        {
             emulate = true;
             break;
+        }
         
         case 's':
+        {
             runTests = false;
             break;
+        }
+        
+        case 'p':
+        {
+            std::string const arg = optarg;
+            std::stringstream optStream(arg);
+            if ( !(optStream >> port) )
+            {
+                fprintf(stderr, "Unable to parse port number \"%s\".\n", optarg);
+                usage(argv[0]);
+                exit(EXIT_FAILURE);
+            }
+            break;
+        }
         
         default:
-            fprintf(stderr, "Unknown option -%c.\n", optopt);
-            usage();
+        {
+            usage(argv[0]);
             exit(EXIT_FAILURE);
+        }
         }
     }
     
@@ -70,11 +95,9 @@ int main (int argc, char * argv[])
         {
             driver = new MatrixDriverHT1632C();
         }
-        catch (const std::system_error & error)
+        catch (std::runtime_error const & error)
         {
-            DBG_PRINTF("Error: %s:%d - %s\n",
-                error.code().category().name(), error.code().value(),
-                error.code().message().c_str());
+            DBG_PRINTF("Unable to create driver.\n");
             exit(EXIT_FAILURE);
         }
     }
@@ -83,6 +106,10 @@ int main (int argc, char * argv[])
     // Create matrix controller
     MatrixController controller = MatrixController(driver);
     DBG_PRINTF("Created controller.\n");
+    
+    // TODO: clean this up
+    launchWebserver(port);
+    DBG_PRINTF("Started webserver on port %u.\n", port);
     
     if (runTests)
     {
@@ -203,6 +230,9 @@ int main (int argc, char * argv[])
     
     // Free allocated MatrixDriver
     delete driver;
+    
+    // Stop the webserver
+    stopWebserver();
     
     exit(EXIT_SUCCESS);
 }

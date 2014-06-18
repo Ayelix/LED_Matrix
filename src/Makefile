@@ -1,12 +1,18 @@
 # Makefile to build LED_Matrix
 
 CXX = g++
-CXXFLAGS = -Wall -Werror -std=gnu++0x
+CXXFLAGS = -Wall -Werror
 # Prevent accidental build of C code
 CC = <none>
 CFLAGS = <none>
 
+# Libraries which must be linked when building code with Pion
+PION_LIBS = -lboost_thread -lboost_system -lboost_filesystem -lboost_regex \
+	-lboost_date_time -lboost_signals -lboost_iostreams \
+    -llog4cpp -lpion
+
 OBJECTS = matrix.o matrix-debug.o \
+	webserver/matrix-webserver.o webserver/matrix-webserver-launcher.o \
 	matrix-controller.o \
 	matrix-driver.o matrix-driver-console.o matrix-driver-HT1632C.o \
 	matrix-font.o matrix-timer.o
@@ -23,7 +29,7 @@ default: all
 #debug: all
 
 all: $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -o $(EXECUTABLE) $(OBJECTS) -lncurses
+	$(CXX) $(CXXFLAGS) -o $(EXECUTABLE) $(OBJECTS) -lncurses $(PION_LIBS)
 
 clean:
-	rm -f *.o $(EXECUTABLE)
+	rm -f $(OBJECTS) $(EXECUTABLE)

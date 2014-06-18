@@ -7,9 +7,9 @@
 #include <ncurses.h>
 
 // Undefine if debug output no longer desired for all builds
-#define DEBUG
+#define MATRIX_DEBUG MATRIX_DEBUG
 
-#ifdef DEBUG
+#if defined(MATRIX_DEBUG)
 #include <cstdio>
 extern FILE *DBG_logfile;
 extern void DBG_INIT();

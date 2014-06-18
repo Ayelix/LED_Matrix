@@ -3,3 +3,32 @@
 
 - Install ncurses development tools:
   sudo apt-get install libncurses-dev ncurses-doc
+
+- Install Pion networking library development tools:
+  Prebuilt package is available on the Raspbian jessie distribution.  Steps to
+  install a single package from a different distribution are in a post by user
+  frg_rpi at:
+  http://www.raspberrypi.org/forums/viewtopic.php?f=66&t=47944
+  The steps taken were:
+  1. Add the following line to /etc/apt/sources/list:
+     deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi
+  2. Create the file /etc/apt/preferences with the following contents:
+     Package: *
+     Pin: release n=wheezy
+     Pin-Priority: 900
+
+     Package: *
+     Pin: release n=jessie
+     Pin-Priority: 300
+
+     Package: *
+     Pin: release o=Raspbian
+     Pin-Priority: -10
+  3. Update package list:
+     sudo apt-get update
+  4. Install the libpion-dev package from the jessie distribution:
+     sudo apt-get install -t jessie libpion-dev
+  5. The libboost1.54-all-dev package might also be needed:
+     sudo apt-get install -t jessie libboost1.54-all-dev
+  The very long and manual install process attempted first is recorded in console
+  script file pion-install.script.

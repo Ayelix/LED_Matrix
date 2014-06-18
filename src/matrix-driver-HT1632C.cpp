@@ -4,15 +4,21 @@
 #include <sys/ioctl.h>
 #include <linux/spi/spidev.h>
 #include <cstdio>
-#include <system_error>
+#include <stdexcept>
+#include <cerrno>
 #include <cstring>
 
 MatrixDriverHT1632C::MatrixDriverHT1632C()
 {
-    // If displayData isn't the size we expect it might be a problem
-    if (sizeof(displayData) != HT1632C_NUM_DATA_BYTES)
+    std::string const errorPrefix = "MatrixDriverHT1632C::MatrixDriverHT1632C(): ";
+    std::string errorStr;
+    
+    // This driver (sloppily) depends on the values of ROWS and COLUMNS
+    if ( (ROWS != 16) || (COLUMNS != 24) )
     {
-        DBG_PRINTF("MatrixDriverHT1632C::MatrixDriverHT1632C(): WARNING - display data size mismatch.\n");
+        errorStr = errorPrefix + "WARNING - incorrect row/column size.\n";
+        DBG_PRINTF(errorStr.c_str());
+        throw std::runtime_error(errorStr);
     }
     
     // Initialize displayData by writing zeros then setting mode bits
@@ -23,8 +29,9 @@ MatrixDriverHT1632C::MatrixDriverHT1632C()
     spiFd = open("/dev/spidev0.0", O_WRONLY);
     if (spiFd < 0)
     {
-        DBG_PRINTF("MatrixDriverHT1632C::MatrixDriverHT1632C(): unable to open SPI device.\n");
-        throw std::system_error(EDOM, std::system_category());
+        errorStr = errorPrefix + "unable to open SPI device.\n";
+        DBG_PRINTF(errorStr.c_str());
+        throw std::runtime_error(errorStr);    
     }
     
     // Configure SPI clock mode
@@ -36,60 +43,69 @@ MatrixDriverHT1632C::MatrixDriverHT1632C()
     uint8_t mode = SPI_MODE_3;
     if (-1 == ioctl(spiFd, SPI_IOC_WR_MODE, &mode))
     {
-        DBG_PRINTF("MatrixDriverHT1632C::MatrixDriverHT1632C(): unable to set SPI mode.\n");
-        throw std::system_error(EDOM, std::system_category());
+        errorStr = errorPrefix + "unable to set SPI mode.\n";
+        DBG_PRINTF(errorStr.c_str());
+        throw std::runtime_error(errorStr); 
     }
     // Verify SPI clock mode
     uint8_t modeResult;
     if (-1 == ioctl(spiFd, SPI_IOC_RD_MODE, &modeResult))
     {
-        DBG_PRINTF("MatrixDriverHT1632C::MatrixDriverHT1632C(): unable to get SPI mode.\n");
-        throw std::system_error(EDOM, std::system_category());
+        errorStr = errorPrefix + "unable to get SPI mode.\n";
+        DBG_PRINTF(errorStr.c_str());
+        throw std::runtime_error(errorStr); 
     }
     if (mode != modeResult)
     {
-        DBG_PRINTF("MatrixDriverHT1632C::MatrixDriverHT1632C(): SPI mode incorrect.\n");
-        throw std::system_error(EDOM, std::system_category());
+        errorStr = errorPrefix + "SPI mode incorrect.\n";
+        DBG_PRINTF(errorStr.c_str());
+        throw std::runtime_error(errorStr); 
     }
     
     // Configure SPI bits per word
     uint8_t bits = 8;
     if (-1 == ioctl(spiFd, SPI_IOC_WR_BITS_PER_WORD, &bits))
     {
-        DBG_PRINTF("MatrixDriverHT1632C::MatrixDriverHT1632C(): unable to set SPI word size.\n");
-        throw std::system_error(EDOM, std::system_category());
+        errorStr = errorPrefix + "unable to set SPI word size.\n";
+        DBG_PRINTF(errorStr.c_str());
+        throw std::runtime_error(errorStr);
     }
     // Verify SPI bits per word
     uint8_t bitsResult = 0;
     if (-1 == ioctl(spiFd, SPI_IOC_RD_BITS_PER_WORD, &bitsResult))
     {
-        DBG_PRINTF("MatrixDriverHT1632C::MatrixDriverHT1632C(): unable to get SPI word size.\n");
-        throw std::system_error(EDOM, std::system_category());
+        errorStr = errorPrefix + "unable to get SPI word size.\n";
+        DBG_PRINTF(errorStr.c_str());
+        throw std::runtime_error(errorStr);
     }
     if (bits != bitsResult)
     {
-        DBG_PRINTF("MatrixDriverHT1632C::MatrixDriverHT1632C(): SPI word size incorrect.\n");
-        throw std::system_error(EDOM, std::system_category());
+        errorStr = errorPrefix + "SPI word size incorrect.\n";
+        DBG_PRINTF(errorStr.c_str());
+        throw std::runtime_error(errorStr);
     }
     
     // Configure SPI clock speed
     unsigned int speed = 488000; //1000000 = 1MHz (HT1632C max)
     if (-1 == ioctl(spiFd, SPI_IOC_WR_MAX_SPEED_HZ, &speed))
     {
-        DBG_PRINTF("MatrixDriverHT1632C::MatrixDriverHT1632C(): unable to set SPI clock speed.\n");
-        throw std::system_error(EDOM, std::system_category());
+        errorStr = errorPrefix + "unable to set SPI clock speed.\n";
+        DBG_PRINTF(errorStr.c_str());
+        throw std::runtime_error(errorStr);
     }
     // Verify SPI clock speed
     unsigned int speedResult = 0;
     if (-1 == ioctl(spiFd, SPI_IOC_RD_MAX_SPEED_HZ, &speedResult))
     {
-        DBG_PRINTF("MatrixDriverHT1632C::MatrixDriverHT1632C(): unable to get SPI clock speed.\n");
-        throw std::system_error(EDOM, std::system_category());
+        errorStr = errorPrefix + "unable to get SPI clock speed.\n";
+        DBG_PRINTF(errorStr.c_str());
+        throw std::runtime_error(errorStr);
     }
     if (speed != speedResult)
     {
-        DBG_PRINTF("MatrixDriverHT1632C::MatrixDriverHT1632C(): SPI clock speed incorrect.\n");
-        throw std::system_error(EDOM, std::system_category());
+        errorStr = errorPrefix + "SPI clock speed incorrect.\n";
+        DBG_PRINTF(errorStr.c_str());
+        throw std::runtime_error(errorStr);
     }
     
     // Initialize the HT1632C
@@ -149,8 +165,10 @@ void MatrixDriverHT1632C::update()
         if ((ssize_t)HT1632C_NUM_DATA_BYTES !=
             write(spiFd, &displayData, HT1632C_NUM_DATA_BYTES))
         {
-            DBG_PRINTF("MatrixDriverHT1632C::update(): unable to write to SPI device.\n");
-            throw std::system_error(EDOM, std::system_category());
+            std::string const errorStr =
+                "MatrixDriverHT1632C::update(): unable to write to SPI device.\n";
+            DBG_PRINTF(errorStr.c_str());
+            throw std::runtime_error(errorStr);
         }
         
         // Reset stateChanged flag now that the matrix has been updated
@@ -175,8 +193,10 @@ void MatrixDriverHT1632C::sendCommand(HT1632C_CMD cmd)
     if (sizeof(completeCommand) !=
         write(spiFd, &completeCommand, sizeof(completeCommand)))
     {
-        DBG_PRINTF("MatrixDriverHT1632C::sendCommand(): unable to write to SPI device.\n");
-        throw std::system_error(EDOM, std::system_category());
+        std::string const errorStr =
+            "MatrixDriverHT1632C::sendCommand(): unable to write to SPI device.\n";
+        DBG_PRINTF(errorStr.c_str());
+        throw std::runtime_error(errorStr);
     }
 }
 

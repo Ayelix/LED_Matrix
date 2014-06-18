@@ -3,9 +3,14 @@
 #ifndef _MATRIX_FONT_H
 #define _MATRIX_FONT_H
 
+#include "matrix-types.h"
+
 #include <cstddef>
 #include <vector>
-#include <cstdint> // for uint16_t
+
+// Maximum width of the font, this determines the size of FontChar.data and
+// depends on the font used
+size_t const FONT_MAX_WIDTH = 9;
 
 // Structure containing data for a single character as represented in the font.
 typedef struct
@@ -17,7 +22,7 @@ typedef struct
     // Pixel values for the character.  Each value is a column of 16 pixels
     // with each bit representing a pixel.  Most significant bit is the upper-
     // most pixel.
-    std::vector<uint16_t> const data;
+    uint16_t const data[FONT_MAX_WIDTH];
 } FontChar;
 
 // Height of the tallest character in the font
