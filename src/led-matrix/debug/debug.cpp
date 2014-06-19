@@ -1,4 +1,4 @@
-#include "matrix-debug.h"
+#include <led-matrix/debug/debug.h>
 #if defined(MATRIX_DEBUG)
 
 #include <stdlib.h>

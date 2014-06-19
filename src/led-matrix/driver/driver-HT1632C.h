@@ -4,11 +4,11 @@
 #ifndef _MATRIX_DRIVER_HT1632C_H
 #define _MATRIX_DRIVER_HT1632C_H
  
-#include "matrix-driver.h"
+#include <led-matrix/driver/driver.h>
 
 #include <cmath>
 
-#include "matrix-types.h"
+#include <led-matrix/types/types.h>
 
 class MatrixDriverHT1632C : public MatrixDriver
 {

@@ -1,9 +1,9 @@
-#include "matrix-timer.h"
+#include <led-matrix/timer/timer.h>
 
 #include <csignal>
 #include <sys/time.h>
 
-#include "matrix-debug.h"
+#include <led-matrix/debug/debug.h>
 
 namespace MatrixTimer
 {

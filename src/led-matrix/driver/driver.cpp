@@ -1,4 +1,4 @@
-#include "matrix-driver.h"
+#include <led-matrix/driver/driver.h>
 
 #include <cstring>
 

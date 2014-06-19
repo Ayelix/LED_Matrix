@@ -4,7 +4,7 @@
 #ifndef _MATRIX_DRIVER_H
 #define _MATRIX_DRIVER_H
 
-#include "matrix-debug.h"
+#include <led-matrix/debug/debug.h>
 
 class MatrixDriver
 {

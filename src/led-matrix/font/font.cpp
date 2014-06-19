@@ -1,4 +1,4 @@
-#include "matrix-font.h"
+#include <led-matrix/font/font.h>
 
 // Update these if the fonts cover more characters
 char const font_min = ' ';

@@ -3,7 +3,7 @@
 #ifndef _MATRIX_FONT_H
 #define _MATRIX_FONT_H
 
-#include "matrix-types.h"
+#include <led-matrix/types/types.h>
 
 #include <cstddef>
 #include <vector>
