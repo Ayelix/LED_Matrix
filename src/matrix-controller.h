@@ -36,8 +36,9 @@ public:
     // timing as accurate as possible.
     void update();
     
-    // Get the current mode
+    // Get/Set the current mode
     ControllerMode getMode() {return mode;}
+    void setMode(ControllerMode mode);
     // Move to the next mode
     void nextMode();
     
@@ -76,9 +77,6 @@ private:
     
     // Current state
     ControllerMode mode;
-    
-    // Update current state.  Calls the appropriate enter*Mode() method.
-    void enterMode(ControllerMode mode);
     
     // Default delay used in update*Mode methods which don't require a different
     // delay

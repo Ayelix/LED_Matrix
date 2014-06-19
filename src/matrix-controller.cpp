@@ -71,10 +71,10 @@ void MatrixController::nextMode()
     {
         intMode = 0;
     }
-    enterMode(static_cast<ControllerMode>(intMode));
+    setMode(static_cast<ControllerMode>(intMode));
 }
 
-void MatrixController::enterMode(ControllerMode mode)
+void MatrixController::setMode(ControllerMode mode)
 {
     switch(mode)
     {
@@ -106,7 +106,7 @@ void MatrixController::enterMode(ControllerMode mode)
     case MATRIX_CONTROLLER_MODE_COUNT:
     {
         // Log the error and reset to idle
-        DBG_PRINTF("Invalid mode in MatrixController::enterMode(%d).\n", mode);
+        DBG_PRINTF("Invalid mode in MatrixController::setMode(%d).\n", mode);
         enterIdleMode();
         break;
     }

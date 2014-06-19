@@ -8,7 +8,7 @@ CFLAGS = <none>
 
 # Libraries which must be linked when building code with Pion
 PION_LIBS = -lboost_thread -lboost_system -lboost_filesystem -lboost_regex \
-	-lboost_date_time -lboost_signals -lboost_iostreams \
+	-lboost_date_time -lboost_signals -lboost_iostreams -lboost_atomic \
     -llog4cpp -lpion
 
 OBJECTS = matrix.o matrix-debug.o \

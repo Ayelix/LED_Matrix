@@ -107,10 +107,11 @@ int main (int argc, char * argv[])
     MatrixController controller = MatrixController(driver);
     DBG_PRINTF("Created controller.\n");
     
-    // TODO: clean this up
+    // Start the webserver
     launchWebserver(port);
     DBG_PRINTF("Started webserver on port %u.\n", port);
     
+    // Run startup tests if appropriate
     if (runTests)
     {
         DBG_PRINTF("Testing pixels.\n");
@@ -175,11 +176,11 @@ int main (int argc, char * argv[])
         sleep(1);
     }
     
-    controller.enterIdleMode();
     DBG_PRINTF("\nThe following options are available:\n");
     DBG_PRINTF("  q: quit\n");
     DBG_PRINTF("  t: update text mode string\n");
     DBG_PRINTF("Press any other key to change mode.\n\n");
+    controller.enterIdleMode();
     
     // Main loop
     int typedCh = ERR;
@@ -222,6 +223,14 @@ int main (int argc, char * argv[])
             {
                 controller.nextMode();
             }
+        }
+        
+        // Check for mode change in the webserver's queue
+        MatrixController::ControllerMode mode = popWebserverModeChange();
+        if (MatrixController::MATRIX_CONTROLLER_MODE_COUNT != mode)
+        {
+            DBG_PRINTF("Mode update received from webserver.\n");
+            controller.setMode(mode);
         }
         
         // Slow down the loop a bit
