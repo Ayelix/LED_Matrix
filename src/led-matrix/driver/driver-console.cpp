@@ -1,4 +1,4 @@
-#include <led-matrix/driver/driver-console.h>
+#include <led-matrix/driver/driver-console.hpp>
 
 MatrixDriverConsole::MatrixDriverConsole()
 {

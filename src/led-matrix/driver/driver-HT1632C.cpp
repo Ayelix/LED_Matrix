@@ -1,4 +1,4 @@
-#include <led-matrix/driver/driver-HT1632C.h>
+#include <led-matrix/driver/driver-HT1632C.hpp>
 
 #include <fcntl.h>
 #include <sys/ioctl.h>

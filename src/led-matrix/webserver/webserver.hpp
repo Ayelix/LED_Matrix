@@ -6,7 +6,7 @@
 #include <pion/http/server.hpp>
 #include <boost/lockfree/queue.hpp>
 
-#include <led-matrix/controller/controller.h>
+#include <led-matrix/controller/controller.hpp>
 
 class MatrixWebserver : public pion::http::server
 {

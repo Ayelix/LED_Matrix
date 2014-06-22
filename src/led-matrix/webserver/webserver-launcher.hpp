@@ -3,7 +3,7 @@
  * so that they don't have to be recompiled whenever the main file changes.
  */
 
-#include <led-matrix/controller/controller.h>
+#include <led-matrix/controller/controller.hpp>
 
 // Start the webserver listening on the given port
 void launchWebserver(unsigned int port);

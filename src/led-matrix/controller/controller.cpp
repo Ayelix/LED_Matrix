@@ -1,9 +1,9 @@
-#include <led-matrix/controller/controller.h>
+#include <led-matrix/controller/controller.hpp>
 
 #include <cmath>
 
-#include <led-matrix/debug/debug.h>
-#include <led-matrix/timer/timer.h>
+#include <led-matrix/debug/debug.hpp>
+#include <led-matrix/timer/timer.hpp>
 
 long int const MatrixController::ANIMATION_DELAY_MS = 25;
 std::string const MatrixController::TEXT_DEFAULT = "Text mode! ";

@@ -1,7 +1,7 @@
-#include <led-matrix/debug/debug.h>
+#include <led-matrix/debug/debug.hpp>
 #if defined(MATRIX_DEBUG)
 
-#include <stdlib.h>
+#include <cstdlib>
 
 char DBG_LOGFILE_NAME[] = "matrix-log.txt";
 FILE * DBG_logfile = NULL;

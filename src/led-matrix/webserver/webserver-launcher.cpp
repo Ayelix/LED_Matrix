@@ -1,6 +1,6 @@
-#include <led-matrix/webserver/webserver-launcher.h>
+#include <led-matrix/webserver/webserver-launcher.hpp>
 
-#include <led-matrix/webserver/webserver.h>
+#include <led-matrix/webserver/webserver.hpp>
 
 static MatrixWebserver server;
 

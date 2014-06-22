@@ -4,8 +4,8 @@
 #ifndef _MATRIX_CONTROLLER_H
 #define _MATRIX_CONTROLLER_H
 
-#include <led-matrix/driver/driver.h>
-#include <led-matrix/font/font.h>
+#include <led-matrix/driver/driver.hpp>
+#include <led-matrix/font/font.hpp>
 
 #include <string>
 

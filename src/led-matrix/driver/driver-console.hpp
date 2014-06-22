@@ -6,7 +6,7 @@
 
 #include <ncurses.h>
  
-#include <led-matrix/driver/driver.h>
+#include <led-matrix/driver/driver.hpp>
 
 class MatrixDriverConsole : public MatrixDriver
 {

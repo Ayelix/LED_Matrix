@@ -7,13 +7,13 @@
 #include <sstream>
 #include <stdexcept>
 
-#include <led-matrix/debug/debug.h>
-#include <led-matrix/driver/driver.h>
-#include <led-matrix/driver/driver-console.h>
-#include <led-matrix/driver/driver-HT1632C.h>
-#include <led-matrix/controller/controller.h>
-#include <led-matrix/font/font.h>
-#include <led-matrix/webserver/webserver-launcher.h>
+#include <led-matrix/debug/debug.hpp>
+#include <led-matrix/driver/driver.hpp>
+#include <led-matrix/driver/driver-console.hpp>
+#include <led-matrix/driver/driver-HT1632C.hpp>
+#include <led-matrix/controller/controller.hpp>
+#include <led-matrix/font/font.hpp>
+#include <led-matrix/webserver/webserver-launcher.hpp>
 
 unsigned int const DEFAULT_PORT = 8080;
 
