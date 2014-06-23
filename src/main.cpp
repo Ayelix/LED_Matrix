@@ -113,7 +113,7 @@ int main (int argc, char * argv[])
             static_cast<MatrixMode::MatrixModeID>(i);
         try
         {
-            m = MatrixMode::createMode(id);
+            m = MatrixMode::createMode(id, driver);
             DBG_PRINTF("For i=%d, m is ", i);
             if (NULL != m)
             {

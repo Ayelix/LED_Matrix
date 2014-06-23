@@ -4,33 +4,53 @@
 #include <sstream>
 
 #include <led-matrix/debug/debug.hpp>
+#include <led-matrix/timer/timer.hpp>
 
-MatrixMode::MatrixMode(MatrixModeID id)
+// Mode implementations
+#include <led-matrix/mode/mode-idle.hpp>
+
+MatrixMode::MatrixMode(MatrixModeID id, long int delayMs, MatrixDriver * driver)
+ : m_delayMs(delayMs)
+ , m_driver(driver)
 {
-    if (id < MATRIX_MODE_ID_COUNT)
+    checkID(id, "MatrixMode::MatrixMode()");
+    m_id = id;
+}
+
+void MatrixMode::begin()
+{
+    // Start the update timer so it will be triggered for update()
+    MatrixTimer::startTimer(m_delayMs);
+    m_driver->clearAllPixels();
+    m_driver->update();
+}
+
+bool MatrixMode::needsUpdate()
+{
+    bool retVal = false;
+    // If the timer has elapsed, restart it and return true
+    if (MatrixTimer::checkTimer())
     {
-        m_id = id;
+        MatrixTimer::startTimer(m_delayMs);
+        retVal = true;
     }
-    else
-    {
-        std::ostringstream oss;
-        oss << "MatrixMode::MatrixMode(): Invalid mode ID " << id;
-        std::string const errorStr = oss.str();
-        DBG_PRINTF("%s\n", errorStr.c_str());
-        throw std::invalid_argument(errorStr);
-    }
+    return retVal;
 }
 
 void MatrixMode::destroyMode(MatrixMode * mode)
 {
     if (mode != NULL)
     {
+        checkID(mode->getID(), "MatrixMode::destroyMode()");
+        
         // TODO: cast to appropriate implementation and delete
         switch (mode->getID())
         {
             case MATRIX_MODE_ID_IDLE:
             {
-                DBG_PRINTF("MatrixMode::destroyMode(): mode is IDLE.\n");
+                DBG_PRINTF("MatrixMode::destroyMode(): destroyed MatrixModeIdle instance.\n");
+                MatrixModeIdle * modeIdle = (MatrixModeIdle *)mode;
+                delete modeIdle;
                 return;
             }
             
@@ -57,13 +77,10 @@ void MatrixMode::destroyMode(MatrixMode * mode)
             case MATRIX_MODE_ID_COUNT:
             break;
         }
-        
-        // If this point is reached, the mode is of an unknown type
-        std::ostringstream oss;
-        oss << "MatrixMode::destroyMode(): Invalid mode ID " << mode->getID();
-        std::string const errorStr = oss.str();
-        DBG_PRINTF("%s\n", errorStr.c_str());
-        throw std::invalid_argument(errorStr);
+    
+        // If this point is reached, the mode is of an unknown type and should
+        // have been caught by checkID.
+        throw std::runtime_error("MatrixMode::checkID() failure");
     }
     else
     {
@@ -74,15 +91,18 @@ void MatrixMode::destroyMode(MatrixMode * mode)
     }
 }
 
-MatrixMode * MatrixMode::createMode(MatrixModeID id)
+MatrixMode * MatrixMode::createMode(MatrixModeID id, MatrixDriver * driver)
 {
+    checkID(id, "MatrixMode::createMode()");
+    
     // TODO: allocate appropriate implementation instance
     switch (id)
     {
         case MATRIX_MODE_ID_IDLE:
         {
-            DBG_PRINTF("MatrixMode::createMode(): mode is IDLE.\n");
-            return NULL;
+            MatrixModeIdle * modeIdle = new MatrixModeIdle(driver);
+            DBG_PRINTF("MatrixMode::createMode(): created MatrixModeIdle instance.\n");
+            return modeIdle;
         }
         
         case MATRIX_MODE_ID_TEXT:
@@ -109,10 +129,19 @@ MatrixMode * MatrixMode::createMode(MatrixModeID id)
         break;
     }
     
-    // If this point is reached, the mode is of an unknown type
-    std::ostringstream oss;
-    oss << "MatrixMode::createMode(): Invalid mode ID " << id;
-    std::string const errorStr = oss.str();
-    DBG_PRINTF("%s\n", errorStr.c_str());
-    throw std::invalid_argument(errorStr);
+    // If this point is reached, the mode is of an unknown type and should have
+    // been caught by checkID.
+    throw std::runtime_error("MatrixMode::checkID() failure");
+}
+
+void MatrixMode::checkID(MatrixModeID id, std::string const & prefix)
+{
+    if (id >= MATRIX_MODE_ID_COUNT)
+    {
+        std::ostringstream oss;
+        oss << prefix << ": Invalid mode ID " << id;
+        std::string const errorStr = oss.str();
+        DBG_PRINTF("%s\n", errorStr.c_str());
+        throw std::invalid_argument(errorStr);
+    }
 }
