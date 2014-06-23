@@ -14,6 +14,7 @@
 #include <led-matrix/controller/controller.hpp>
 #include <led-matrix/font/font.hpp>
 #include <led-matrix/webserver/webserver-launcher.hpp>
+#include <led-matrix/mode/mode.hpp>
 
 unsigned int const DEFAULT_PORT = 8080;
 
@@ -102,6 +103,31 @@ int main (int argc, char * argv[])
         }
     }
     DBG_PRINTF("Created driver.\n");
+    
+    
+    //TODO: remove
+    MatrixMode * m = NULL;
+    for (int i = 0; i < 10; i++)
+    {
+        MatrixMode::MatrixModeID id =
+            static_cast<MatrixMode::MatrixModeID>(i);
+        try
+        {
+            m = MatrixMode::createMode(id);
+            DBG_PRINTF("For i=%d, m is ", i);
+            if (NULL != m)
+            {
+                DBG_PRINTF("not ");
+            }
+            DBG_PRINTF("NULL.\n");
+            MatrixMode::destroyMode(m);
+        }
+        catch (std::invalid_argument const & error)
+        {
+            DBG_PRINTF("Caught invalid_argument: %s\n", error.what());
+        }
+    }
+    
     
     // Create matrix controller
     MatrixController controller = MatrixController(driver);
