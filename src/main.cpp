@@ -117,9 +117,14 @@ int main (int argc, char * argv[])
             DBG_PRINTF("For i=%d, m is ", i);
             if (NULL != m)
             {
-                DBG_PRINTF("not ");
+                DBG_PRINTF("not NULL.\n");
+                DBG_PRINTF("Name = \"%s\" Description = \"%s\"\n",
+                    m->getName().c_str(), m->getDescription().c_str());
             }
-            DBG_PRINTF("NULL.\n");
+            else
+            {
+                DBG_PRINTF("NULL.\n");
+            }
             MatrixMode::destroyMode(m);
         }
         catch (std::invalid_argument const & error)

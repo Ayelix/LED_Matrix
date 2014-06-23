@@ -5,17 +5,21 @@
 
 #include <led-matrix/mode/mode.hpp>
 
+#include <string>
+
 class MatrixModeIdle : public MatrixMode
 {
 public:
     MatrixModeIdle(MatrixDriver * driver)
-     : MatrixMode(MATRIX_MODE_ID_IDLE, s_delayMs, driver) {};
+      : MatrixMode(MATRIX_MODE_ID_IDLE, s_nameStr, s_descriptionStr,
+        s_delayMs, driver) {};
 
     void update();
     
 private:
-    // Idle mode update delay
     static long int s_delayMs;
+    static std::string const s_nameStr;
+    static std::string const s_descriptionStr;
 };
 
 #endif

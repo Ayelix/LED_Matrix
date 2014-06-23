@@ -27,7 +27,11 @@ public:
     } MatrixModeID;
     
     // Get the ID of a mode
-    MatrixModeID getID() {return m_id;};
+    MatrixModeID getID() const {return m_id;};
+    
+    // Get the name/description of a mode
+    std::string getName() const {return m_nameStr;}
+    std::string getDescription() const {return m_descriptionStr;}
     
     // Enter this mode.  Clears the matrix and performs all necessary setup to
     // begin updating this mode via update().
@@ -56,7 +60,8 @@ protected:
     // Initialize a mode of the given type with the given update delay.
     // Constructor is protected because createMode() should be used to create
     // the proper implementation for a mode.
-    MatrixMode(MatrixModeID id, long int delayMs, MatrixDriver * driver);
+    MatrixMode(MatrixModeID id, std::string name, std::string description,
+        long int delayMs, MatrixDriver * driver);
     
     // Returns true if this mode needs to be updated (i.e. if the update delay
     // has elapsed since the last check).  It is expected that this method will
@@ -70,6 +75,10 @@ protected:
 private:
     // The ID of this mode
     MatrixModeID m_id;
+    // String name of this mode
+    std::string const m_nameStr;
+    // String description of this mode
+    std::string const m_descriptionStr;
     // Update delay for this mode (milliseconds)
     long int const m_delayMs;
     // Driver updated by this mode

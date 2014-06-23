@@ -9,8 +9,10 @@
 // Mode implementations
 #include <led-matrix/mode/mode-idle.hpp>
 
-MatrixMode::MatrixMode(MatrixModeID id, long int delayMs, MatrixDriver * driver)
- : m_delayMs(delayMs)
+MatrixMode::MatrixMode(MatrixModeID id, std::string name, std::string description,
+    long int delayMs, MatrixDriver * driver)
+ : m_nameStr(name), m_descriptionStr(description)
+ , m_delayMs(delayMs)
  , m_driver(driver)
 {
     checkID(id, "MatrixMode::MatrixMode()");
