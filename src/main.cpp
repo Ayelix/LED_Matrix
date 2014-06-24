@@ -181,7 +181,6 @@ int main (int argc, char * argv[])
     DBG_PRINTF("  q: quit\n");
     DBG_PRINTF("  t: update text mode string\n");
     DBG_PRINTF("Press any other key to change mode.\n\n");
-    //controller.enterIdleMode();
     
     // Main loop
     int typedCh = ERR;
@@ -222,7 +221,7 @@ int main (int argc, char * argv[])
             }
             else
             {
-                //controller.nextMode();
+                controller.nextMode();
             }
         }
         

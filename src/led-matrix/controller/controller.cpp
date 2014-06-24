@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <stdexcept>
+#include <algorithm>
 
 #include <led-matrix/debug/debug.hpp>
 #include <led-matrix/timer/timer.hpp>
@@ -51,27 +52,58 @@ MatrixController::MatrixController(MatrixDriver * const driver)
         throw std::runtime_error(
             "MatrixController::MatrixController(): Unable to create any modes");
     }
+    
+    // Start up in the first mode in the list (initializes m_currentModeIndex)
+    setMode(0u);
 }
 
 void MatrixController::update()
 {
-    //TODO: call update() for the current mode
+    // Simply call update() for the current mode
+    m_modes.at(m_currentModeIndex)->update();
 }
 
 void MatrixController::setMode(MatrixMode const * mode)
 {
-    //TODO: search mode list for given mode and set it as current mode
+    // Search the mode list for the given mode
+    std::vector<MatrixMode *>::iterator modeIter = 
+        std::find(m_modes.begin(), m_modes.end(), mode);
+    // If the mode was found in the list, get its index and call
+    // setMode(unsigned int)
+    if (modeIter != m_modes.end())
+    {
+        setMode(modeIter - m_modes.begin());
+    }
+    // Otherwise, use index 0
+    else
+    {
+        DBG_PRINTF("MatrixController::setMode(MatrixMode *): mode not found.\n");
+        setMode(0u);
+    }
 }
 
 void MatrixController::setMode(unsigned int modeIndex)
 {
-    //TODO: verify modeIndex validity and set corresponding mode as current
+    // If modeIndex is invalid, reset it to 0
+    if (modeIndex >= m_modes.size())
+    {
+        DBG_PRINTF("MatrixController::setMode(unsigned int): invalid mode index %u (only %u modes).\n",
+            modeIndex, m_modes.size());
+        modeIndex = 0;
+    }
+    
+    // Update the current mode index and begin the new mode
+    m_currentModeIndex = modeIndex;
+    MatrixMode * const mode = m_modes[m_currentModeIndex];
+    mode->begin();
+    DBG_PRINTF("Set current mode to: %s\n", mode->getName().c_str());
 }
 
-unsigned int nextMode()
+unsigned int MatrixController::nextMode()
 {
-    //TODO: increment mode index (or iterator) and return new index
-    return 0;
+    // Update the current mode and return the new index
+    setMode((m_currentModeIndex + 1) % m_modes.size());
+    return m_currentModeIndex;
 }
 
 /*
