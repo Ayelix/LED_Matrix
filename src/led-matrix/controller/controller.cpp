@@ -9,8 +9,6 @@
 
 /*
 long int const MatrixController::ANIMATION_DELAY_MS = 25;
-std::string const MatrixController::TEXT_DEFAULT = "Text mode! ";
-long int const MatrixController::TEXT_SCROLL_DELAY_MS = 50;
 long int const MatrixController::VU_UPDATE_DELAY_MS = 5;
 */
 
@@ -106,109 +104,7 @@ unsigned int MatrixController::nextMode()
     return m_currentModeIndex;
 }
 
-/*
- * Mode control methods
-
-void MatrixController::update()
-{
-    switch (mode)
-    {
-    case MATRIX_CONTROLLER_MODE_IDLE:
-    {
-        // Don't do anything in idle mode.  All pixels should already be off so
-        // just wait for a mode change.
-        break;
-    }
-    
-    case MATRIX_CONTROLLER_MODE_TEXT:
-    {
-        updateTextMode();
-        break;
-    }
-    
-    case MATRIX_CONTROLLER_MODE_VU:
-    {
-        updateVUMode();
-        break;
-    }
-    
-    case MATRIX_CONTROLLER_MODE_SINE:
-    {
-        updateSineMode();
-        break;
-    }
-    
-    // Invalid mode(s) begin here
-    case MATRIX_CONTROLLER_MODE_COUNT:
-    {
-        // Log the error and reset to idle
-        DBG_PRINTF("Invalid mode in MatrixController::update(): %d.\n", mode);
-        enterIdleMode();
-        break;
-    }
-    }
-}
-
-void MatrixController::nextMode()
-{
-    int intMode = static_cast<int>(mode) + 1;
-    if (intMode >= MATRIX_CONTROLLER_MODE_COUNT)
-    {
-        intMode = 0;
-    }
-    setMode(static_cast<ControllerMode>(intMode));
-}
-
-void MatrixController::setMode(ControllerMode mode)
-{
-    switch(mode)
-    {
-    case MATRIX_CONTROLLER_MODE_IDLE:
-    {
-        enterIdleMode();
-        break;
-    }
-    
-    case MATRIX_CONTROLLER_MODE_TEXT:
-    {
-        enterTextMode();
-        break;
-    }
-    
-    case MATRIX_CONTROLLER_MODE_VU:
-    {
-        enterVUMode();
-        break;
-    }
-    
-    case MATRIX_CONTROLLER_MODE_SINE:
-    {
-        enterSineMode();
-        break;
-    }
-    
-    // Invalid mode(s) begin here
-    case MATRIX_CONTROLLER_MODE_COUNT:
-    {
-        // Log the error and reset to idle
-        DBG_PRINTF("Invalid mode in MatrixController::setMode(%d).\n", mode);
-        enterIdleMode();
-        break;
-    }
-    }
-}
-    
- * Idle mode methods
-
-void MatrixController::enterIdleMode()
-{
-    // Turn off all pixels, update driver, and update the current mode
-    driver->clearAllPixels();
-    driver->update();
-    mode = MATRIX_CONTROLLER_MODE_IDLE;
-    DBG_PRINTF("Entered mode: idle.\n");
-}
-
+/*    
  * Text mode methods
 
 void MatrixController::enterTextMode(std::string const & text)

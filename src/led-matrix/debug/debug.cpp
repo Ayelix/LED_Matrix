@@ -6,10 +6,11 @@
 char DBG_LOGFILE_NAME[] = "matrix-log.txt";
 FILE * DBG_logfile = NULL;
 
-// Wrapper for endwin(), used for atexit()
-static void DBG_endwin()
+// Operations to perform at exit, used with atexit()
+static void DBG_shutdown()
 {
     endwin();
+    fclose(DBG_logfile);
 }
 
 void DBG_INIT()
@@ -27,7 +28,7 @@ void DBG_INIT()
     scrollok(stdscr, TRUE);
     nodelay(stdscr, TRUE);
     noecho();
-    atexit(DBG_endwin);
+    atexit(DBG_shutdown);
     DBG_PRINTF("Debug mode initialized.  Log file is \"%s\".\n", DBG_LOGFILE_NAME);
 }
 

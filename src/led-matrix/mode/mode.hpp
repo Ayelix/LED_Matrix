@@ -58,6 +58,10 @@ public:
     // Throws std::runtime_error on failure.
     static void destroyMode(MatrixMode * mode);
     
+    // Virtual destructor as recommended by:
+    // http://stackoverflow.com/a/318137
+    virtual ~MatrixMode() {};
+    
 protected:
     // Initialize a mode of the given type with the given update delay.
     // Constructor is protected because createMode() should be used to create
@@ -70,9 +74,8 @@ protected:
     // be called from update().
     bool needsUpdate();
     
-    // Virtual destructor as recommended by:
-    // http://stackoverflow.com/a/318137
-    virtual ~MatrixMode() {};
+    // Driver updated by this mode
+    MatrixDriver * const m_driver;
     
 private:
     // The ID of this mode
@@ -83,8 +86,6 @@ private:
     std::string const m_descriptionStr;
     // Update delay for this mode (milliseconds)
     long int const m_delayMs;
-    // Driver updated by this mode
-    MatrixDriver * const m_driver;
     
     // TODO: List of settings for this mode
     // std::list<MatrixModeSetting *> m_settings;

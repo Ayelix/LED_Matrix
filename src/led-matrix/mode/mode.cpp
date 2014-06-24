@@ -8,12 +8,13 @@
 
 // Mode implementations
 #include <led-matrix/mode/mode-idle.hpp>
+#include <led-matrix/mode/mode-text.hpp>
 
 MatrixMode::MatrixMode(MatrixModeID id, std::string name, std::string description,
     long int delayMs, MatrixDriver * driver)
- : m_nameStr(name), m_descriptionStr(description)
+ : m_driver(driver)
+ , m_nameStr(name), m_descriptionStr(description)
  , m_delayMs(delayMs)
- , m_driver(driver)
 {
     checkID(id, "MatrixMode::MatrixMode()");
     m_id = id;
@@ -50,15 +51,17 @@ void MatrixMode::destroyMode(MatrixMode * mode)
         {
             case MATRIX_MODE_ID_IDLE:
             {
-                DBG_PRINTF("MatrixMode::destroyMode(): destroyed MatrixModeIdle instance.\n");
                 MatrixModeIdle * modeIdle = (MatrixModeIdle *)mode;
                 delete modeIdle;
+                DBG_PRINTF("MatrixMode::destroyMode(): destroyed MatrixModeIdle instance.\n");
                 return;
             }
             
             case MATRIX_MODE_ID_TEXT:
             {
-                DBG_PRINTF("MatrixMode::destroyMode(): mode is TEXT.\n");
+                MatrixModeText * modeText = (MatrixModeText *)mode;
+                delete modeText;
+                DBG_PRINTF("MatrixMode::destroyMode(): destroyed MatrixModeText instance.\n");
                 return;
             }
             
@@ -109,8 +112,9 @@ MatrixMode * MatrixMode::createMode(MatrixModeID id, MatrixDriver * driver)
         
         case MATRIX_MODE_ID_TEXT:
         {
-            DBG_PRINTF("MatrixMode::createMode(): mode is TEXT.\n");
-            return NULL;
+            MatrixModeText * modeText = new MatrixModeText(driver);
+            DBG_PRINTF("MatrixMode::createMode(): created MatrixModeText instance.\n");
+            return modeText;
         }
         
         case MATRIX_MODE_ID_VU:
