@@ -13,9 +13,6 @@ class MatrixWebserver : public pion::http::server
 public:
     // Create a webserver which will listen on the given port when started.
     MatrixWebserver(unsigned int port = 0);
-    
-    // Queue which will hold mode change commands received by the webserver.
-    boost::lockfree::queue<MatrixController::ControllerMode> modeChangeQueue;
 
 private:
     static std::string const kHTMLStart;

@@ -104,36 +104,6 @@ int main (int argc, char * argv[])
     }
     DBG_PRINTF("Created driver.\n");
     
-    
-    //TODO: remove
-    MatrixMode * m = NULL;
-    for (int i = 0; i < 10; i++)
-    {
-        MatrixMode::MatrixModeID id =
-            static_cast<MatrixMode::MatrixModeID>(i);
-        try
-        {
-            m = MatrixMode::createMode(id, driver);
-            DBG_PRINTF("For i=%d, m is ", i);
-            if (NULL != m)
-            {
-                DBG_PRINTF("not NULL.\n");
-                DBG_PRINTF("Name = \"%s\" Description = \"%s\"\n",
-                    m->getName().c_str(), m->getDescription().c_str());
-            }
-            else
-            {
-                DBG_PRINTF("NULL.\n");
-            }
-            MatrixMode::destroyMode(m);
-        }
-        catch (std::invalid_argument const & error)
-        {
-            DBG_PRINTF("Caught invalid_argument: %s\n", error.what());
-        }
-    }
-    
-    
     // Create matrix controller
     MatrixController controller = MatrixController(driver);
     DBG_PRINTF("Created controller.\n");
@@ -201,7 +171,7 @@ int main (int argc, char * argv[])
             testString += c;
         }
         testString += ' ';
-        controller.setText(testString);
+        //controller.setText(testString);
         
         DBG_PRINTF("Done testing, starting main loop in 1 second.\n");
         sleep(1);
@@ -211,7 +181,7 @@ int main (int argc, char * argv[])
     DBG_PRINTF("  q: quit\n");
     DBG_PRINTF("  t: update text mode string\n");
     DBG_PRINTF("Press any other key to change mode.\n\n");
-    controller.enterIdleMode();
+    //controller.enterIdleMode();
     
     // Main loop
     int typedCh = ERR;
@@ -240,7 +210,7 @@ int main (int argc, char * argv[])
                 char text[256];
                 if (ERR != getnstr(text, 256))
                 {
-                    controller.setText(text);
+                    //controller.setText(text);
                 }
                 else
                 {
@@ -252,16 +222,8 @@ int main (int argc, char * argv[])
             }
             else
             {
-                controller.nextMode();
+                //controller.nextMode();
             }
-        }
-        
-        // Check for mode change in the webserver's queue
-        MatrixController::ControllerMode mode = popWebserverModeChange();
-        if (MatrixController::MATRIX_CONTROLLER_MODE_COUNT != mode)
-        {
-            DBG_PRINTF("Mode update received from webserver.\n");
-            controller.setMode(mode);
         }
         
         // Slow down the loop a bit

@@ -4,7 +4,6 @@
  
 MatrixWebserver::MatrixWebserver(unsigned int port)
     : pion::http::server(port)
-    , modeChangeQueue(100)
 {
     // Add resource handlers
     add_resource("/",
@@ -31,50 +30,9 @@ void MatrixWebserver::rootHandler(pion::http::request_ptr& httpRequest,
     
     if (paramIter != params.end())
     {
-        // This block uses the MatrixController::ControllerMode type and values
-        // often.
-        //using namespace MatrixController;
-        
         // Parse the mode parameter
         std::string const modeStr = paramIter->second;
-         MatrixController::ControllerMode mode =
-             MatrixController::MATRIX_CONTROLLER_MODE_COUNT;
-        if ("idle" == modeStr)
-        {
-            mode = MatrixController::MATRIX_CONTROLLER_MODE_IDLE;
-        }
-        else if ("text" == modeStr)
-        {
-            mode = MatrixController::MATRIX_CONTROLLER_MODE_TEXT;
-        }
-        else if ("vu" == modeStr)
-        {
-            mode = MatrixController::MATRIX_CONTROLLER_MODE_VU;
-        }
-        else if ("sine" == modeStr)
-        {
-            mode = MatrixController::MATRIX_CONTROLLER_MODE_SINE;
-        }
-        
-        // If a mode was parsed, queue the mode change and respond OK
-        if(MatrixController::MATRIX_CONTROLLER_MODE_COUNT != mode)
-        {
-            DBG_PRINTF("MatrixWebserver::rootHandler(): Queueing mode change \"%s\".\n",
-                modeStr.c_str());
-            writer->write("Got mode change ");
-            writer->write(modeStr);
-            
-            while (!modeChangeQueue.push(mode));
-            
-            r.set_status_code(pion::http::types::RESPONSE_CODE_OK);
-            r.set_status_message(pion::http::types::RESPONSE_MESSAGE_OK);
-        }
-        else
-        {
-            writer->write("Unknown mode \"");
-            writer->write(modeStr);
-            writer->write("\"");
-        }
+        writer->write("Not implemented.");
     }
 
     writer->send();

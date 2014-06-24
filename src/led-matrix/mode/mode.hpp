@@ -50,10 +50,12 @@ public:
     
     // Allocate memory for and create a new mode of the given type which will
     // use the given driver.
+    // Returns NULL or throws std::runtime_error on failure.
     // The returned pointer should be freed with destroyMode().
     static MatrixMode * createMode(MatrixModeID id, MatrixDriver * driver);
     
     // Destroy the given mode, freeing memory allocated by createMode().
+    // Throws std::runtime_error on failure.
     static void destroyMode(MatrixMode * mode);
     
 protected:

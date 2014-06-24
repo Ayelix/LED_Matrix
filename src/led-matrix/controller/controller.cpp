@@ -1,28 +1,81 @@
 #include <led-matrix/controller/controller.hpp>
 
 #include <cmath>
+#include <stdexcept>
 
 #include <led-matrix/debug/debug.hpp>
 #include <led-matrix/timer/timer.hpp>
 
+/*
 long int const MatrixController::ANIMATION_DELAY_MS = 25;
 std::string const MatrixController::TEXT_DEFAULT = "Text mode! ";
 long int const MatrixController::TEXT_SCROLL_DELAY_MS = 50;
 long int const MatrixController::VU_UPDATE_DELAY_MS = 5;
+*/
 
 MatrixController::MatrixController(MatrixDriver * const driver)
-: driver(driver)
+: m_driver(driver)
+, m_modes(MatrixMode::MATRIX_MODE_ID_COUNT, NULL)
 {
-    // Begin in idle mode
-    enterIdleMode();
+    // Initialize mode list contents
+    MatrixMode::MatrixModeID id = static_cast<MatrixMode::MatrixModeID>(0);
+    std::vector<MatrixMode *>::iterator iter = m_modes.begin();
+    while (iter != m_modes.end())
+    {
+        // Create the mode for the current mode ID
+        *iter = MatrixMode::createMode(id, m_driver);
+        // If createMode failed, remove the list entry and move the iterator to
+        // the next entry.
+        if (NULL == *iter)
+        {
+            DBG_PRINTF("MatrixController::MatrixController(): Unable to create mode for ID %u.\n", id);
+            iter = m_modes.erase(iter);
+        }
+        // Otherwise, move the iterator to the next entry
+        else
+        {
+            iter++;
+        }
+        id = static_cast<MatrixMode::MatrixModeID>(id + 1);
+    }
     
-    // Initialize text mode string
-    setText(TEXT_DEFAULT);
+    if (!m_modes.empty())
+    {
+        DBG_PRINTF(
+            "MatrixController::MatrixController(): Mode list initialized with %u modes.\n",
+            m_modes.size());
+    }
+    // Controller cannot operate with an empty mode list
+    else
+    {
+        throw std::runtime_error(
+            "MatrixController::MatrixController(): Unable to create any modes");
+    }
 }
 
-/*******************************************************************************
+void MatrixController::update()
+{
+    //TODO: call update() for the current mode
+}
+
+void MatrixController::setMode(MatrixMode const * mode)
+{
+    //TODO: search mode list for given mode and set it as current mode
+}
+
+void MatrixController::setMode(unsigned int modeIndex)
+{
+    //TODO: verify modeIndex validity and set corresponding mode as current
+}
+
+unsigned int nextMode()
+{
+    //TODO: increment mode index (or iterator) and return new index
+    return 0;
+}
+
+/*
  * Mode control methods
- ******************************************************************************/
 
 void MatrixController::update()
 {
@@ -113,9 +166,7 @@ void MatrixController::setMode(ControllerMode mode)
     }
 }
     
-/*******************************************************************************
  * Idle mode methods
- ******************************************************************************/
 
 void MatrixController::enterIdleMode()
 {
@@ -126,9 +177,7 @@ void MatrixController::enterIdleMode()
     DBG_PRINTF("Entered mode: idle.\n");
 }
 
-/*******************************************************************************
  * Text mode methods
- ******************************************************************************/
 
 void MatrixController::enterTextMode(std::string const & text)
 {
@@ -236,9 +285,7 @@ void MatrixController::updateTextMode()
     }
 }
 
-/*******************************************************************************
  * VU meter mode methods
- ******************************************************************************/
 void MatrixController::enterVUMode()
 {
     // Turn off all pixels and update driver
@@ -290,9 +337,7 @@ void MatrixController::updateVUMode()
     }
 }
 
-/*******************************************************************************
  * Sine mode methods
- ******************************************************************************/
 void MatrixController::enterSineMode()
 {
     // Turn off all pixels and update driver
@@ -327,9 +372,7 @@ void MatrixController::updateSineMode()
     }
 }
 
-/*******************************************************************************
  * Misc helper methods
- ******************************************************************************/
 void MatrixController::writeCharacterColumn(uint16_t columnValue, size_t col)
 {
     // Iterate through each pixel value.  Pixels are stored with the MSB as the
@@ -415,3 +458,4 @@ void MatrixController::plotLevel(unsigned int level, PlotType type, bool fill)
     
     driver->update();
 }
+*/
