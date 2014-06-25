@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 #include <sstream>
+#include <cmath>
 
 #include <led-matrix/debug/debug.hpp>
 #include <led-matrix/timer/timer.hpp>
@@ -10,6 +11,7 @@
 #include <led-matrix/mode/mode-idle.hpp>
 #include <led-matrix/mode/mode-text.hpp>
 #include <led-matrix/mode/mode-vu.hpp>
+#include <led-matrix/mode/mode-sine.hpp>
 
 MatrixMode::MatrixMode(MatrixModeID id, std::string name, std::string description,
     long int delayMs, MatrixDriver * driver)
@@ -47,14 +49,13 @@ void MatrixMode::destroyMode(MatrixMode * mode)
     {
         checkID(mode->getID(), "MatrixMode::destroyMode()");
         
-        // TODO: cast to appropriate implementation and delete
+        // Cast to appropriate implementation and delete
         switch (mode->getID())
         {
             case MATRIX_MODE_ID_IDLE:
             {
                 MatrixModeIdle * const modeIdle = (MatrixModeIdle *)mode;
                 delete modeIdle;
-                DBG_PRINTF("MatrixMode::destroyMode(): destroyed MatrixModeIdle instance.\n");
                 return;
             }
             
@@ -62,7 +63,6 @@ void MatrixMode::destroyMode(MatrixMode * mode)
             {
                 MatrixModeText * const modeText = (MatrixModeText *)mode;
                 delete modeText;
-                DBG_PRINTF("MatrixMode::destroyMode(): destroyed MatrixModeText instance.\n");
                 return;
             }
             
@@ -70,13 +70,13 @@ void MatrixMode::destroyMode(MatrixMode * mode)
             {
                 MatrixModeVu * const modeVu = (MatrixModeVu *)mode;
                 delete modeVu;
-                DBG_PRINTF("MatrixMode::destroyMode(): destroyed MatrixModeVu instance.\n");
                 return;
             }
             
             case MATRIX_MODE_ID_SINE:
             {
-                DBG_PRINTF("MatrixMode::destroyMode(): mode is SINE.\n");
+                MatrixModeSine * const modeSine = (MatrixModeSine *)mode;
+                delete modeSine;
                 return;
             }
             
@@ -109,28 +109,25 @@ MatrixMode * MatrixMode::createMode(MatrixModeID id, MatrixDriver * driver)
         case MATRIX_MODE_ID_IDLE:
         {
             MatrixModeIdle * const modeIdle = new MatrixModeIdle(driver);
-            DBG_PRINTF("MatrixMode::createMode(): created MatrixModeIdle instance.\n");
             return modeIdle;
         }
         
         case MATRIX_MODE_ID_TEXT:
         {
             MatrixModeText * const modeText = new MatrixModeText(driver);
-            DBG_PRINTF("MatrixMode::createMode(): created MatrixModeText instance.\n");
             return modeText;
         }
         
         case MATRIX_MODE_ID_VU:
         {
             MatrixModeVu * const modeVu = new MatrixModeVu(driver);
-            DBG_PRINTF("MatrixMode::createMode(): created MatrixModeVu instance.\n");
             return modeVu;
         }
         
         case MATRIX_MODE_ID_SINE:
         {
-            DBG_PRINTF("MatrixMode::createMode(): mode is SINE.\n");
-            return NULL;
+            MatrixModeSine * const modeSine = new MatrixModeSine(driver);
+            return modeSine;
         }
         
         // No default case to preserve compiler warnings for unhandled enum
@@ -142,6 +139,79 @@ MatrixMode * MatrixMode::createMode(MatrixModeID id, MatrixDriver * driver)
     // If this point is reached, the mode is of an unknown type and should have
     // been caught by checkID.
     throw std::runtime_error("MatrixMode::checkID() failure");
+}
+
+void MatrixMode::plotLevel(unsigned int level, PlotType type, bool fill)
+{
+    // Coordinates for the rectangle which represents the plotted point.
+    // Maximums are not inclusive, i.e. they must be 1 greater than the target.
+    size_t col_min = 0, col_max = 0;
+    size_t row_min = 0, row_max = 0;
+    
+    switch (type)
+    {
+    case MATRIX_MODE_PLOT_TYPE_VERTICAL:
+    {
+        // Scale the level to get the row to turn on
+        level = round((double)(level * (m_driver->ROWS - 2)) / 100.0);
+        level = m_driver->ROWS - 2 - level;
+        // Calculate the min/max values
+        col_min = 0;
+        col_max = m_driver->COLUMNS;
+        row_min = level;
+        row_max = (fill) ? (m_driver->ROWS) : (row_min + 2);
+        // Clear all other pixels for this plot type
+        m_driver->clearAllPixels();
+        break;
+    }
+    
+    case MATRIX_MODE_PLOT_TYPE_HORIZONTAL:
+    {
+        // Scale the level to get the column to turn on
+        level = round((double)(level * (m_driver->COLUMNS - 2)) / 100.0);
+        //level = m_driver->COLUMNS - 2 - level;
+        // Calculate the min/max values
+        col_min = (fill) ? (0) : (level);
+        col_max = level + 2;
+        row_min = 0;
+        row_max = m_driver->ROWS;
+        // Clear all other pixels for this plot type
+        m_driver->clearAllPixels();
+        break;
+    }
+    
+    case MATRIX_MODE_PLOT_TYPE_SHIFTING:
+    {
+        // Scale the level to get the row to turn on
+        level = round((double)(level * (m_driver->ROWS - 2)) / 100.0);
+        level = m_driver->ROWS - 2 - level;
+        // Calculate the min/max values
+        col_min = m_driver->COLUMNS - 1;
+        col_max = col_min + 1;
+        row_min = level;
+        row_max = (fill) ? (m_driver->ROWS) : (row_min + 2);
+        // Shift all other pixels for this plot type
+        m_driver->shiftLeftAllPixels();
+        break;
+    }
+    
+    case MATRIX_MODE_PLOT_TYPE_COUNT:
+    {
+        DBG_PRINTF("Invalid plot type in MatrixController::plotLevel(%d, %d).\n",
+            level, type);
+    }
+    }
+    
+    // Set the pixels according to the coordinates set above
+    for (size_t row = row_min; row < row_max; row++)
+    {
+        for (size_t col = col_min; col < col_max; col++)
+        {
+            m_driver->setPixel(col, row);
+        }
+    }
+    
+    m_driver->update();
 }
 
 void MatrixMode::checkID(MatrixModeID id, std::string const & prefix)

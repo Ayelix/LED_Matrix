@@ -1,14 +1,14 @@
-/* matrix-mode-vu - MatrixMode implementation for vu meter mode.
+/* matrix-mode - MatrixMode implementation for plotting sine wave.
  */
-#ifndef _MATRIX_MODE_VU_H
-#define _MATRIX_MODE_VU_H
+#ifndef _MATRIX_MODE_SINE_H
+#define _MATRIX_MODE_SINE_H
 
 #include <led-matrix/mode/mode.hpp>
 
-class MatrixModeVu : public MatrixMode
+class MatrixModeSine : public MatrixMode
 {
 public:
-    MatrixModeVu(MatrixDriver * driver)
+    MatrixModeSine(MatrixDriver * driver)
       : MatrixMode(s_modeID, s_nameStr, s_descriptionStr,
         s_delayMs, driver) {};
 
