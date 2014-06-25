@@ -9,6 +9,7 @@
 // Mode implementations
 #include <led-matrix/mode/mode-idle.hpp>
 #include <led-matrix/mode/mode-text.hpp>
+#include <led-matrix/mode/mode-vu.hpp>
 
 MatrixMode::MatrixMode(MatrixModeID id, std::string name, std::string description,
     long int delayMs, MatrixDriver * driver)
@@ -51,7 +52,7 @@ void MatrixMode::destroyMode(MatrixMode * mode)
         {
             case MATRIX_MODE_ID_IDLE:
             {
-                MatrixModeIdle * modeIdle = (MatrixModeIdle *)mode;
+                MatrixModeIdle * const modeIdle = (MatrixModeIdle *)mode;
                 delete modeIdle;
                 DBG_PRINTF("MatrixMode::destroyMode(): destroyed MatrixModeIdle instance.\n");
                 return;
@@ -59,7 +60,7 @@ void MatrixMode::destroyMode(MatrixMode * mode)
             
             case MATRIX_MODE_ID_TEXT:
             {
-                MatrixModeText * modeText = (MatrixModeText *)mode;
+                MatrixModeText * const modeText = (MatrixModeText *)mode;
                 delete modeText;
                 DBG_PRINTF("MatrixMode::destroyMode(): destroyed MatrixModeText instance.\n");
                 return;
@@ -67,7 +68,9 @@ void MatrixMode::destroyMode(MatrixMode * mode)
             
             case MATRIX_MODE_ID_VU:
             {
-                DBG_PRINTF("MatrixMode::destroyMode(): mode is VU.\n");
+                MatrixModeVu * const modeVu = (MatrixModeVu *)mode;
+                delete modeVu;
+                DBG_PRINTF("MatrixMode::destroyMode(): destroyed MatrixModeVu instance.\n");
                 return;
             }
             
@@ -105,22 +108,23 @@ MatrixMode * MatrixMode::createMode(MatrixModeID id, MatrixDriver * driver)
     {
         case MATRIX_MODE_ID_IDLE:
         {
-            MatrixModeIdle * modeIdle = new MatrixModeIdle(driver);
+            MatrixModeIdle * const modeIdle = new MatrixModeIdle(driver);
             DBG_PRINTF("MatrixMode::createMode(): created MatrixModeIdle instance.\n");
             return modeIdle;
         }
         
         case MATRIX_MODE_ID_TEXT:
         {
-            MatrixModeText * modeText = new MatrixModeText(driver);
+            MatrixModeText * const modeText = new MatrixModeText(driver);
             DBG_PRINTF("MatrixMode::createMode(): created MatrixModeText instance.\n");
             return modeText;
         }
         
         case MATRIX_MODE_ID_VU:
         {
-            DBG_PRINTF("MatrixMode::createMode(): mode is VU.\n");
-            return NULL;
+            MatrixModeVu * const modeVu = new MatrixModeVu(driver);
+            DBG_PRINTF("MatrixMode::createMode(): created MatrixModeVu instance.\n");
+            return modeVu;
         }
         
         case MATRIX_MODE_ID_SINE:

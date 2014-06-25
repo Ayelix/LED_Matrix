@@ -1,7 +1,5 @@
 #include <led-matrix/mode/mode-idle.hpp>
 
-#include <led-matrix/debug/debug.hpp>
-
 MatrixMode::MatrixModeID MatrixModeIdle::s_modeID =
     MatrixMode::MATRIX_MODE_ID_IDLE;
 // Idle mode update delay is long because there is nothing to update

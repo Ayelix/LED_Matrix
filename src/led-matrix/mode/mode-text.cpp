@@ -1,7 +1,5 @@
 #include <led-matrix/mode/mode-text.hpp>
 
-#include <led-matrix/debug/debug.hpp>
-
 MatrixMode::MatrixModeID MatrixModeText::s_modeID =
     MatrixMode::MATRIX_MODE_ID_TEXT;
 long int MatrixModeText::s_delayMs = 50;
