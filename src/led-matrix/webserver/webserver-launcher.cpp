@@ -2,15 +2,22 @@
 
 #include <led-matrix/webserver/webserver.hpp>
 
-static MatrixWebserver server;
+static MatrixWebserver * server = NULL;
 
-void launchWebserver(unsigned int port)
+void launchWebserver(unsigned int port, MatrixController * controller)
 {
-    server.set_port(port);
-    server.start();
+    if (NULL == server)
+    {
+        server = new MatrixWebserver(port, controller);
+        server->start();
+    }
 }
 
 void stopWebserver()
 {
-    server.stop();
+    if (NULL != server)
+    {
+        server->stop();
+        delete server;
+    }
 }

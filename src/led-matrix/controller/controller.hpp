@@ -22,7 +22,7 @@ public:
     void update();
     
     // Get the current mode
-    MatrixMode * getMode() {return m_modes.at(m_currentModeIndex);}
+    MatrixMode * getMode() const {return m_modes.at(m_currentModeIndex);}
     // Set the current mode by a pointer to the mode itself
     void setMode(MatrixMode const * mode);
     // Set the current mode by index in the list provided by getModes()
@@ -32,7 +32,7 @@ public:
     unsigned int nextMode();
     
     // Get the list of modes available with this controller
-    std::vector<MatrixMode *> const & getModes() {return m_modes;}
+    std::vector<MatrixMode *> const & getModes() const {return m_modes;}
     
 private:
     // MatrixDriver to be used by this controller

@@ -109,7 +109,7 @@ int main (int argc, char * argv[])
     DBG_PRINTF("Created controller.\n");
     
     // Start the webserver
-    launchWebserver(port);
+    launchWebserver(port, &controller);
     DBG_PRINTF("Started webserver on port %u.\n", port);
     
     // Run startup tests if appropriate
