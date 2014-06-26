@@ -5,10 +5,11 @@
 #define _MATRIX_CONTROLLER_H
 
 #include <led-matrix/driver/driver.hpp>
-#include <led-matrix/mode/mode.hpp>
+#include <led-matrix/controller/mode/mode.hpp>
 
 #include <string>
 #include <vector>
+#include <boost/thread/recursive_mutex.hpp>
 
 class MatrixController
 {
@@ -19,16 +20,21 @@ public:
     // Update the current mode if needed.  This method should be called
     // as frequently as possible (i.e. in an event loop) to keep the internal
     // timing as accurate as possible.
+    // NOT thread-safe
     void update();
     
     // Get the current mode
+    // Thread-safe
     MatrixMode * getMode() const {return m_modes.at(m_currentModeIndex);}
     // Set the current mode by a pointer to the mode itself
+    // Thread-safe
     void setMode(MatrixMode const * mode);
     // Set the current mode by index in the list provided by getModes()
+    // Thread-safe
     void setMode(unsigned int modeIndex);
     // Move to the next mode.  Returns the index of the new mode in the list
     // provided by getModes()
+    // Thread-safe
     unsigned int nextMode();
     
     // Get the list of modes available with this controller
@@ -44,27 +50,8 @@ private:
     // Index of current mode in m_modes
     unsigned int m_currentModeIndex;
     
-    /***************************************************************************
-     * Misc helper methods
-    // Write one column of pixels (from a font character) at the given column.
-    void writeCharacterColumn(uint16_t columnValue, size_t col);
-    // Plot the given level (normalized to 0-100) on the matrix, using the given
-    // plot type/style and optionally filling all points below the given level.
-    typedef enum
-    {
-        // Bar-graph type plot going from bottom to top
-        MATRIX_CONTROLLER_PLOT_TYPE_VERTICAL,
-        // Bar-graph type plot going from left to right
-        MATRIX_CONTROLLER_PLOT_TYPE_HORIZONTAL,
-        // Shift matrix left and plot the new level on the rightmost column
-        MATRIX_CONTROLLER_PLOT_TYPE_SHIFTING,
-        
-        MATRIX_CONTROLLER_PLOT_TYPE_COUNT
-    } PlotType;
-    void plotLevel(unsigned int level,
-        PlotType type = MATRIX_CONTROLLER_PLOT_TYPE_VERTICAL,
-        bool fill = false);
-    */
+    // Mutex to provide coarse-grained thread-safety
+    boost::recursive_mutex m_mutex;
 };
 
 #endif

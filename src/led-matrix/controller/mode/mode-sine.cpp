@@ -1,4 +1,4 @@
-#include <led-matrix/mode/mode-sine.hpp>
+#include <led-matrix/controller/mode/mode-sine.hpp>
 
 #include <cmath>
 

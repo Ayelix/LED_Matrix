@@ -1,4 +1,4 @@
-#include <led-matrix/mode/mode-text.hpp>
+#include <led-matrix/controller/mode/mode-text.hpp>
 
 MatrixMode::MatrixModeID MatrixModeText::s_modeID =
     MatrixMode::MATRIX_MODE_ID_TEXT;

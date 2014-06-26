@@ -1,4 +1,4 @@
-#include <led-matrix/mode/mode-vu.hpp>
+#include <led-matrix/controller/mode/mode-vu.hpp>
 
 MatrixMode::MatrixModeID MatrixModeVu::s_modeID =
     MatrixMode::MATRIX_MODE_ID_VU;

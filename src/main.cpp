@@ -14,7 +14,7 @@
 #include <led-matrix/controller/controller.hpp>
 #include <led-matrix/font/font.hpp>
 #include <led-matrix/webserver/webserver-launcher.hpp>
-#include <led-matrix/mode/mode.hpp>
+#include <led-matrix/controller/mode/mode.hpp>
 
 unsigned int const DEFAULT_PORT = 8080;
 
@@ -105,7 +105,7 @@ int main (int argc, char * argv[])
     DBG_PRINTF("Created driver.\n");
     
     // Create matrix controller
-    MatrixController controller = MatrixController(driver);
+    MatrixController controller(driver);
     DBG_PRINTF("Created controller.\n");
     
     // Start the webserver

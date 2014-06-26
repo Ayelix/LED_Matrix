@@ -1,4 +1,4 @@
-#include <led-matrix/mode/mode.hpp>
+#include <led-matrix/controller/mode/mode.hpp>
 
 #include <stdexcept>
 #include <sstream>
@@ -8,10 +8,10 @@
 #include <led-matrix/timer/timer.hpp>
 
 // Mode implementations
-#include <led-matrix/mode/mode-idle.hpp>
-#include <led-matrix/mode/mode-text.hpp>
-#include <led-matrix/mode/mode-vu.hpp>
-#include <led-matrix/mode/mode-sine.hpp>
+#include <led-matrix/controller/mode/mode-idle.hpp>
+#include <led-matrix/controller/mode/mode-text.hpp>
+#include <led-matrix/controller/mode/mode-vu.hpp>
+#include <led-matrix/controller/mode/mode-sine.hpp>
 
 MatrixMode::MatrixMode(MatrixModeID id, std::string name, std::string description,
     long int delayMs, MatrixDriver * driver)

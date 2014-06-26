@@ -1,4 +1,4 @@
-#include <led-matrix/mode/mode-idle.hpp>
+#include <led-matrix/controller/mode/mode-idle.hpp>
 
 MatrixMode::MatrixModeID MatrixModeIdle::s_modeID =
     MatrixMode::MATRIX_MODE_ID_IDLE;

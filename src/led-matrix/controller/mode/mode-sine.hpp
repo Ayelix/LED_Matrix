@@ -3,7 +3,7 @@
 #ifndef _MATRIX_MODE_SINE_H
 #define _MATRIX_MODE_SINE_H
 
-#include <led-matrix/mode/mode.hpp>
+#include <led-matrix/controller/mode/mode.hpp>
 
 class MatrixModeSine : public MatrixMode
 {

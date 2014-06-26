@@ -13,7 +13,7 @@ OBJ_FILES := $(patsubst %.cpp,%.o,$(CPP_FILES))
 
 # Build files with g++, adding the current directory to the search path (-I)
 CXX = g++
-CXXFLAGS = -Wall -Werror -I $(TOP)
+CXXFLAGS = -Wall -Werror -g -I $(TOP)
 
 # Prevent accidental build of C code
 CC = <none>

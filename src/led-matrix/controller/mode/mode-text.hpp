@@ -4,7 +4,7 @@
 #ifndef _MATRIX_MODE_TEXT_H
 #define _MATRIX_MODE_TEXT_H
 
-#include <led-matrix/mode/mode.hpp>
+#include <led-matrix/controller/mode/mode.hpp>
 #include <led-matrix/font/font.hpp>
 
 class MatrixModeText : public MatrixMode

@@ -3,7 +3,7 @@
 #ifndef _MATRIX_MODE_VU_H
 #define _MATRIX_MODE_VU_H
 
-#include <led-matrix/mode/mode.hpp>
+#include <led-matrix/controller/mode/mode.hpp>
 
 class MatrixModeVu : public MatrixMode
 {
