@@ -18,11 +18,17 @@ MatrixWebserver::MatrixWebserver(unsigned int port,
     for (unsigned int i = 0; i < m_controllerModes.size(); i++)
     {
         MatrixMode const * const mode = m_controllerModes.at(i);
-        std::ostringstream hrefOSS;
-        hrefOSS << "/mode?mode=" << i;
-        std::string const linkText =
-            mode->getName() + ": " + mode->getDescription();
-        m_mainPageHTML += buildLink(hrefOSS.str(), linkText) + "<br>\n";
+        
+        std::ostringstream oss;
+        oss << "/mode?mode=" << i;
+        std::string const href = oss.str();
+        
+        oss.str(std::string());
+        oss.clear();
+        oss << i << ": " << mode->getName() + " - " + mode->getDescription();
+        std::string const linkText = oss.str();
+        
+        m_mainPageHTML += buildLink(href, linkText) + "<br>\n";
     }
     m_mainPageHTML += "</body></html>";
     

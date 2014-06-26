@@ -37,4 +37,4 @@ obj/%.o: led-matrix/%.cpp
 
 # Remove all object files and the executable
 clean:
-	rm -rf $(OBJ_FILES) $(TOP)obj/ $(EXECUTABLE)
+	rm -f $(OBJ_FILES) $(EXECUTABLE)
