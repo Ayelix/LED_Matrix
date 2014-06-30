@@ -6,10 +6,10 @@
 #include <led-matrix/debug/debug.hpp>
 
 // Setting implementations
-//#include
+#include <led-matrix/controller/mode/setting/setting-string.hpp>
 
-MatrixSetting::MatrixSetting(MatrixSettingID id, std::string name,
-    std::string description)
+MatrixSetting::MatrixSetting(MatrixSettingID id, std::string const & name,
+    std::string const & description)
  : m_nameStr(name), m_descriptionStr(description)
 {
     checkID(id, "MatrixSetting::MatrixSetting()");
@@ -25,12 +25,13 @@ void MatrixSetting::destroySetting(MatrixSetting * setting)
         // Cast to appropriate implementation and delete
         switch (setting->getID())
         {
-            /*case MATRIX_SETTING_ID_--:
+            case MATRIX_SETTING_ID_STRING:
             {
-                MatrixSetting-- * const setting-- = (MatrixSetting-- *)setting;
-                delete setting--;
+                MatrixSettingString * const settingString =
+                    (MatrixSettingString *)setting;
+                delete settingString;
                 return;
-            }*/
+            }
             
             // No default case to preserve compiler warnings for unhandled enum
             // values
@@ -51,18 +52,20 @@ void MatrixSetting::destroySetting(MatrixSetting * setting)
     }
 }
 
-MatrixSetting * MatrixSetting::createSetting(MatrixSettingID id)
+MatrixSetting * MatrixSetting::createSetting(MatrixSettingID id,
+    std::string const & name, std::string const & description)
 {
     checkID(id, "MatrixSetting::createSetting()");
     
     // Allocate appropriate implementation instance
     switch (id)
     {
-        /*case MATRIX_SETTING_ID_--:
+        case MATRIX_SETTING_ID_STRING:
         {
-            MatrixSetting-- * const setting-- = new MatrixSetting--();
-            return setting--;
-        }*/
+            MatrixSettingString * const settingString =
+                new MatrixSettingString(name, description);
+            return settingString;
+        }
         
         // No default case to preserve compiler warnings for unhandled enum
         // values

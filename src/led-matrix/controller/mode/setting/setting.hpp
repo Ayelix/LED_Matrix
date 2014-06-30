@@ -12,7 +12,8 @@ public:
     // All available setting types
     typedef enum
     {
-        // 
+        // A setting for a string which may be modified
+        MATRIX_SETTING_ID_STRING, //MatrixSettingString
         
         // Add new settings above so the count remains correct
         MATRIX_SETTING_ID_COUNT //not a valid setting
@@ -29,7 +30,8 @@ public:
     // Returns NULL or throws std::runtime_error or std::invalid_argument on
     // failure.
     // The returned pointer should be freed with destroySetting().
-    static MatrixSetting * createSetting(MatrixSettingID id);
+    static MatrixSetting * createSetting(MatrixSettingID id,
+        std::string const & name, std::string const & description);
     
     // Destroy the given setting, freeing memory allocated by createSetting().
     // Throws std::runtime_error or std::invalid_argument on failure.
@@ -43,7 +45,8 @@ protected:
     // Initialize a setting of the given type.
     // Constructor is protected because createSetting() should be used to create
     // the proper implementation for a setting.
-    MatrixSetting(MatrixSettingID id, std::string name, std::string description);
+    MatrixSetting(MatrixSettingID id, std::string const & name,
+        std::string const & description);
     
 private:
     // The ID of this setting
