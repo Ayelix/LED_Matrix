@@ -103,7 +103,7 @@ MatrixMode * MatrixMode::createMode(MatrixModeID id, MatrixDriver * driver)
 {
     checkID(id, "MatrixMode::createMode()");
     
-    // TODO: allocate appropriate implementation instance
+    // Allocate appropriate implementation instance
     switch (id)
     {
         case MATRIX_MODE_ID_IDLE:

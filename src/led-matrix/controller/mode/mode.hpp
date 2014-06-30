@@ -1,4 +1,4 @@
-/* matrix-mode - abstract class to represent modes of operation for the matrix.
+/* mode.hpp - abstract class to represent modes of operation for the matrix.
  */
 #ifndef _MATRIX_MODE_H
 #define _MATRIX_MODE_H
@@ -16,11 +16,11 @@ public:
         // Idle/off state - all pixels off
         MATRIX_MODE_ID_IDLE, //MatrixModeIdle
         // Scrolling text mode
-        MATRIX_MODE_ID_TEXT, //not yet implemented
+        MATRIX_MODE_ID_TEXT, //MatrixModeText
         // VU meter mode
-        MATRIX_MODE_ID_VU, //not yet implemented
+        MATRIX_MODE_ID_VU, //MarixModeVu
         // Sine wave mode
-        MATRIX_MODE_ID_SINE, //not yet implemented
+        MATRIX_MODE_ID_SINE, //MatrixModeSine
         
         // Add new modes above so the count remains correct
         MATRIX_MODE_ID_COUNT //not a valid mode
@@ -50,12 +50,13 @@ public:
     
     // Allocate memory for and create a new mode of the given type which will
     // use the given driver.
-    // Returns NULL or throws std::runtime_error on failure.
+    // Returns NULL or throws std::runtime_error or std::invalid_argument on
+    // failure.
     // The returned pointer should be freed with destroyMode().
     static MatrixMode * createMode(MatrixModeID id, MatrixDriver * driver);
     
     // Destroy the given mode, freeing memory allocated by createMode().
-    // Throws std::runtime_error on failure.
+    // Throws std::runtime_error or std::invalid_argument on failure.
     static void destroyMode(MatrixMode * mode);
     
     // Virtual destructor as recommended by:
