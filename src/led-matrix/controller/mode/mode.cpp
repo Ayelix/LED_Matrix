@@ -22,6 +22,21 @@ MatrixMode::MatrixMode(MatrixModeID id, std::string name, std::string descriptio
 {
     checkID(id, "MatrixMode::MatrixMode()");
     m_id = id;
+    
+    // Add the setting for update speed
+    m_speedSetting = (MatrixSettingRangedDouble *) MatrixSetting::createSetting(
+        MatrixSetting::MATRIX_SETTING_ID_RANGED_DOUBLE, "Speed",
+        "Speed at which this mode will run as a percentage of the normal speed, """
+        "provided in the range 50-500%");
+    if (NULL == m_speedSetting)
+    {
+        throw std::runtime_error(
+            "MatrixModeText::MatrixModeText(): Unable to create speed setting");
+    }
+    m_speedSetting->setMin(50);
+    m_speedSetting->setMax(500);
+    m_speedSetting->setValue(100);
+    m_settings.push_back(m_speedSetting);
 }
 
 MatrixMode::~MatrixMode()
@@ -37,7 +52,7 @@ MatrixMode::~MatrixMode()
 void MatrixMode::begin()
 {
     // Start the update timer so it will be triggered for update()
-    MatrixTimer::startTimer(m_delayMs);
+    MatrixTimer::startTimer(getDelay());
     m_driver->clearAllPixels();
     m_driver->update();
 }
@@ -48,7 +63,7 @@ bool MatrixMode::needsUpdate()
     // If the timer has elapsed, restart it and return true
     if (MatrixTimer::checkTimer())
     {
-        MatrixTimer::startTimer(m_delayMs);
+        MatrixTimer::startTimer(getDelay());
         retVal = true;
     }
     return retVal;
@@ -150,6 +165,19 @@ MatrixMode * MatrixMode::createMode(MatrixModeID id, MatrixDriver * driver)
     // If this point is reached, the mode is of an unknown type and should have
     // been caught by checkID.
     throw std::runtime_error("MatrixMode::checkID() failure");
+}
+
+long int MatrixMode::getDelay()
+{
+    // Get the percentage from the setting
+    double speedPercentage = m_speedSetting->getValue();
+    
+    // Scale down the percentage to a decimal value
+    // (0.50-5.00 instead of 50-500)
+    speedPercentage /= 100;
+    
+    // Divide the default update delay by the percentage and return that value
+    return m_delayMs / speedPercentage;
 }
 
 void MatrixMode::plotLevel(unsigned int level, PlotType type, bool fill)

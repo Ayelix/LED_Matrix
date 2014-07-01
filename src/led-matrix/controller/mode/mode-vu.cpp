@@ -6,7 +6,7 @@ long int const MatrixModeVu::s_DELAY_MS = 5;
 std::string const MatrixModeVu::s_NAME_STR =
     "Vu mode";
 std::string const MatrixModeVu::s_DESCRIPTION_STR =
-    "Use the matrix as a VU meter.";
+    "Use the matrix as a VU meter";
 
 void MatrixModeVu::update()
 {

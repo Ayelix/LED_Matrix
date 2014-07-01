@@ -8,7 +8,7 @@ long int const MatrixModeSine::s_DELAY_MS = 25;
 std::string const MatrixModeSine::s_NAME_STR =
     "Sine mode";
 std::string const MatrixModeSine::s_DESCRIPTION_STR =
-    "Plot a sine wave on the matrix.";
+    "Plot a sine wave on the matrix";
 
 void MatrixModeSine::update()
 {

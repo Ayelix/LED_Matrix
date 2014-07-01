@@ -11,7 +11,7 @@ long int const MatrixModeText::s_DELAY_MS = 50;
 std::string const MatrixModeText::s_NAME_STR =
     "Text mode";
 std::string const MatrixModeText::s_DESCRIPTION_STR =
-    "Scroll text across the matrix.";
+    "Scroll text across the matrix";
     
 std::string const MatrixModeText::s_DEFAULT_TEXT =
     "Text mode!";

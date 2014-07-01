@@ -8,6 +8,7 @@
 
 #include <led-matrix/driver/driver.hpp>
 #include <led-matrix/controller/mode/setting/setting.hpp>
+#include <led-matrix/controller/mode/setting/setting-ranged-double.hpp>
 
 class MatrixMode
 {
@@ -82,8 +83,13 @@ protected:
     MatrixDriver * const m_driver;
     
     // List of settings for this mode
-    // Initialized to empty in constructor and MatrixSetting::destroySetting is
+    // Initialized in constructor and MatrixSetting::destroySetting is
     // called on all elements in destructor.
+    // Initialized with a single MatrixSettingRangedDouble with the range
+    // 0-500 to adjust the update speed of the mode.  100 represents the normal
+    // speed; a higher value increases the speed and a lower value decreases it.
+    // If a mode doesn't require this setting, the vector should be cleared
+    // in the subclass constructor.
     std::vector<MatrixSetting *> m_settings;
     
     // Plot the given level (in the range 0-100) on the matrix, using the given
@@ -110,8 +116,15 @@ private:
     std::string const m_nameStr;
     // String description of this mode
     std::string const m_descriptionStr;
-    // Update delay for this mode (milliseconds)
+    // Default update delay for this mode (milliseconds)
     long int const m_delayMs;
+    
+    // Setting used to modify the speed of this mode
+    MatrixSettingRangedDouble * m_speedSetting;
+    
+    // Helper method to get the update delay including the modifier from the
+    // speed setting
+    long int getDelay();
     
     // Check an ID and throw an invalid_argument exception if it's invalid.
     // Error string is of the format:

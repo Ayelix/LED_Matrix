@@ -15,6 +15,7 @@
 #include <led-matrix/font/font.hpp>
 #include <led-matrix/webserver/webserver-launcher.hpp>
 #include <led-matrix/controller/mode/mode.hpp>
+#include <led-matrix/controller/mode/setting/setting.hpp>
 
 unsigned int const DEFAULT_PORT = 8080;
 
@@ -171,7 +172,33 @@ int main (int argc, char * argv[])
             testString += c;
         }
         testString += ' ';
-        //controller.setText(testString);
+        
+        // Print out information about all modes and their settings
+        DBG_PRINTF("\n");
+        std::vector<MatrixMode *> const & modeList = controller.getModes();
+        std::vector<MatrixMode *>::const_iterator modeIter = modeList.begin();
+        unsigned int modeIndex = 0;
+        for ( ; modeIter < modeList.end(); modeIter++, modeIndex++)
+        {
+            DBG_PRINTF("Mode %2d: %s - %s.\n", modeIndex,
+                (*modeIter)->getName().c_str(),
+                (*modeIter)->getDescription().c_str());
+            DBG_PRINTF("Settings:\n");
+            
+            std::vector<MatrixSetting *> const & settingsList =
+                (*modeIter)->getSettings();
+            std::vector<MatrixSetting *>::const_iterator settingIter =
+                settingsList.begin();
+            unsigned int settingIndex = 0;
+            for ( ; settingIter < settingsList.end()
+                ; settingIter++, settingIndex++)
+            {
+                DBG_PRINTF("         %2d: %s - %s.\n", settingIndex,
+                    (*settingIter)->getName().c_str(),
+                    (*settingIter)->getDescription().c_str());
+            }
+        }
+        DBG_PRINTF("\n");
         
         DBG_PRINTF("Done testing, starting main loop in 1 second.\n");
         sleep(1);

@@ -7,7 +7,7 @@ long int const MatrixModeIdle::s_DELAY_MS = 500;
 std::string const MatrixModeIdle::s_NAME_STR =
     "Idle mode";
 std::string const MatrixModeIdle::s_DESCRIPTION_STR =
-    "All pixels are turned off.";
+    "All pixels are turned off";
 
 void MatrixModeIdle::update()
 {

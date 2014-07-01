@@ -7,6 +7,7 @@
 
 // Setting implementations
 #include <led-matrix/controller/mode/setting/setting-string.hpp>
+#include <led-matrix/controller/mode/setting/setting-ranged-double.hpp>
 
 MatrixSetting::MatrixSetting(MatrixSettingID id, std::string const & name,
     std::string const & description)
@@ -30,6 +31,13 @@ void MatrixSetting::destroySetting(MatrixSetting * setting)
                 MatrixSettingString * const settingString =
                     (MatrixSettingString *)setting;
                 delete settingString;
+                return;
+            }
+            case MATRIX_SETTING_ID_RANGED_DOUBLE:
+            {
+                MatrixSettingRangedDouble * const settingRangedDouble =
+                    (MatrixSettingRangedDouble *)setting;
+                delete settingRangedDouble;
                 return;
             }
             
@@ -65,6 +73,12 @@ MatrixSetting * MatrixSetting::createSetting(MatrixSettingID id,
             MatrixSettingString * const settingString =
                 new MatrixSettingString(name, description);
             return settingString;
+        }
+        case MATRIX_SETTING_ID_RANGED_DOUBLE:
+        {
+            MatrixSettingRangedDouble * const settingRangedDouble =
+                new MatrixSettingRangedDouble(name, description);
+            return settingRangedDouble;
         }
         
         // No default case to preserve compiler warnings for unhandled enum

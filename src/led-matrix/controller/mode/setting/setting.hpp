@@ -14,6 +14,8 @@ public:
     {
         // A setting for a string which may be modified
         MATRIX_SETTING_ID_STRING, //MatrixSettingString
+        // A setting for a double which may take a value within a specific range
+        MATRIX_SETTING_ID_RANGED_DOUBLE, //MatrixSettingRangedDouble
         
         // Add new settings above so the count remains correct
         MATRIX_SETTING_ID_COUNT //not a valid setting
