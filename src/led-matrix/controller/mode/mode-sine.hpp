@@ -4,13 +4,12 @@
 #define _MATRIX_MODE_SINE_H
 
 #include <led-matrix/controller/mode/mode.hpp>
+#include <led-matrix/controller/mode/setting/setting-ranged-double.hpp>
 
 class MatrixModeSine : public MatrixMode
 {
 public:
-    MatrixModeSine(MatrixDriver * driver)
-      : MatrixMode(s_MODE_ID, s_NAME_STR, s_DESCRIPTION_STR,
-        s_DELAY_MS, driver) {};
+    MatrixModeSine(MatrixDriver * driver);
 
     void update();
     
@@ -19,6 +18,9 @@ private:
     static long int const s_DELAY_MS;
     static std::string const s_NAME_STR;
     static std::string const s_DESCRIPTION_STR;
+    
+    // Setting used to modify the period of the sine wave
+    MatrixSettingRangedDouble * m_periodSetting;
 };
 
 #endif
