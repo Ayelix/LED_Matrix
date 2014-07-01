@@ -14,7 +14,7 @@ std::string const MatrixModeText::s_DESCRIPTION_STR =
     "Scroll text across the matrix.";
     
 std::string const MatrixModeText::s_DEFAULT_TEXT =
-    "Text mode! ";
+    "Text mode!";
     
 MatrixModeText::MatrixModeText(MatrixDriver * driver)
   : MatrixMode(s_MODE_ID, s_NAME_STR, s_DESCRIPTION_STR, s_DELAY_MS, driver)
@@ -36,8 +36,8 @@ void MatrixModeText::begin()
 {
     MatrixMode::begin();
     
-    // Get current text from the corresponding setting
-    m_text = m_textSetting->getString() + ' ';
+    // Get current text from the text setting
+    m_text = m_textSetting->getString();
     
     // Reset text positions
     m_textPosition = m_text.begin();
@@ -80,16 +80,32 @@ void MatrixModeText::update()
                 m_textPosition++;
             }
         }
-        // Otherwise, leave the column blank as a separator between the end and
-        // beginning of the string and reset the string position
+        // Otherwise, scroll the text all the way out before restarting at the
+        // first character
         else
         {
-            // Reset text position to the first character
-            m_textPosition = m_text.begin();
+            if (m_charPosition < m_driver->COLUMNS)
+            {
+                // Leave the column blank and move to the next column
+                m_charPosition++;
+            }
+            else
+            {
+                // Reset position in current character
+                m_charPosition = 0;
+                // Reset text position to the first character
+                m_textPosition = m_text.begin();
+            }
         }
         
         // Update the driver to display the scrolled text
         m_driver->update();
+        
+        // Reset the animation if the text setting has been changed
+        if (m_textSetting->getString() != m_text)
+        {
+            begin();
+        }
     }
 }
 
