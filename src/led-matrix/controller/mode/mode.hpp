@@ -4,8 +4,10 @@
 #define _MATRIX_MODE_H
 
 #include <string>
+#include <vector>
 
 #include <led-matrix/driver/driver.hpp>
+#include <led-matrix/controller/mode/setting/setting.hpp>
 
 class MatrixMode
 {
@@ -45,8 +47,9 @@ public:
     // this method to determine if it is time for the animation to be updated.
     virtual void update() = 0;
     
-    // TODO: Get the settings for a mode
-    // std::list<MatrixModeSetting> const & getSettings();
+    // Get the settings for a mode
+    std::vector<MatrixSetting *> const & getSettings() const
+        {return m_settings;}
     
     // Allocate memory for and create a new mode of the given type which will
     // use the given driver.
@@ -61,7 +64,7 @@ public:
     
     // Virtual destructor as recommended by:
     // http://stackoverflow.com/a/318137
-    virtual ~MatrixMode() {};
+    virtual ~MatrixMode();
     
 protected:
     // Initialize a mode of the given type with the given update delay.
@@ -77,6 +80,11 @@ protected:
     
     // Driver updated by this mode
     MatrixDriver * const m_driver;
+    
+    // List of settings for this mode
+    // Initialized to empty in constructor and MatrixSetting::destroySetting is
+    // called on all elements in destructor.
+    std::vector<MatrixSetting *> m_settings;
     
     // Plot the given level (in the range 0-100) on the matrix, using the given
     // plot type/style and optionally setting all pixels below the given level.
@@ -104,9 +112,6 @@ private:
     std::string const m_descriptionStr;
     // Update delay for this mode (milliseconds)
     long int const m_delayMs;
-    
-    // TODO: List of settings for this mode
-    // std::list<MatrixModeSetting *> m_settings;
     
     // Check an ID and throw an invalid_argument exception if it's invalid.
     // Error string is of the format:

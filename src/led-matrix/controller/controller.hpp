@@ -17,6 +17,8 @@ public:
     // Create a MatrixController which will use the given driver
     MatrixController(MatrixDriver * const driver);
     
+    //TODO: destructor must free all mode pointers
+    
     // Update the current mode if needed.  This method should be called
     // as frequently as possible (i.e. in an event loop) to keep the internal
     // timing as accurate as possible.

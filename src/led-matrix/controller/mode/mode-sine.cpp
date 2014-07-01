@@ -2,12 +2,12 @@
 
 #include <cmath>
 
-MatrixMode::MatrixModeID MatrixModeSine::s_modeID =
+MatrixMode::MatrixModeID const MatrixModeSine::s_MODE_ID =
     MatrixMode::MATRIX_MODE_ID_SINE;
-long int MatrixModeSine::s_delayMs = 25;
-std::string const MatrixModeSine::s_nameStr =
+long int const MatrixModeSine::s_DELAY_MS = 25;
+std::string const MatrixModeSine::s_NAME_STR =
     "Sine mode";
-std::string const MatrixModeSine::s_descriptionStr =
+std::string const MatrixModeSine::s_DESCRIPTION_STR =
     "Plot a sine wave on the matrix.";
 
 void MatrixModeSine::update()

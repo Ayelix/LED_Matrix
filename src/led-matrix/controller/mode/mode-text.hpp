@@ -6,25 +6,37 @@
 
 #include <led-matrix/controller/mode/mode.hpp>
 #include <led-matrix/font/font.hpp>
+#include <led-matrix/controller/mode/setting/setting-string.hpp>
 
 class MatrixModeText : public MatrixMode
 {
 public:
-    MatrixModeText(MatrixDriver * driver)
-      : MatrixMode(s_modeID, s_nameStr, s_descriptionStr,
-        s_delayMs, driver) {};
+    MatrixModeText(MatrixDriver * driver);
 
     void begin();
     void update();
     
 private:
-    static MatrixMode::MatrixModeID s_modeID;
-    static long int s_delayMs;
-    static std::string const s_nameStr;
-    static std::string const s_descriptionStr;
+    static MatrixMode::MatrixModeID const s_MODE_ID;
+    static long int const s_DELAY_MS;
+    static std::string const s_NAME_STR;
+    static std::string const s_DESCRIPTION_STR;
+    
+    // Indexes of settings in the settings list
+    enum
+    {
+        // Text to be scrolled, saved in m_textSetting
+        SETTING_INDEX_TEXT, //MatrixSettingString
+        
+        // Number of settings used by the mode
+        SETTING_COUNT
+    };
+    
+    // Setting to modify text being scrolled
+    MatrixSettingString * m_textSetting;
     
     // Default text to scroll
-    static std::string const s_defaultText;
+    static std::string const s_DEFAULT_TEXT;
     
     // Text being scrolled across the matrix
     std::string m_text;

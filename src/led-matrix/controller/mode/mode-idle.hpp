@@ -9,16 +9,16 @@ class MatrixModeIdle : public MatrixMode
 {
 public:
     MatrixModeIdle(MatrixDriver * driver)
-      : MatrixMode(s_modeID, s_nameStr, s_descriptionStr,
-        s_delayMs, driver) {};
+      : MatrixMode(s_MODE_ID, s_NAME_STR, s_DESCRIPTION_STR,
+        s_DELAY_MS, driver) {};
 
     void update();
     
 private:
-    static MatrixMode::MatrixModeID s_modeID;
-    static long int s_delayMs;
-    static std::string const s_nameStr;
-    static std::string const s_descriptionStr;
+    static MatrixMode::MatrixModeID const s_MODE_ID;
+    static long int const s_DELAY_MS;
+    static std::string const s_NAME_STR;
+    static std::string const s_DESCRIPTION_STR;
 };
 
 #endif

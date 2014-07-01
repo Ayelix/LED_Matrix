@@ -1,11 +1,11 @@
 #include <led-matrix/controller/mode/mode-vu.hpp>
 
-MatrixMode::MatrixModeID MatrixModeVu::s_modeID =
+MatrixMode::MatrixModeID const MatrixModeVu::s_MODE_ID =
     MatrixMode::MATRIX_MODE_ID_VU;
-long int MatrixModeVu::s_delayMs = 5;
-std::string const MatrixModeVu::s_nameStr =
+long int const MatrixModeVu::s_DELAY_MS = 5;
+std::string const MatrixModeVu::s_NAME_STR =
     "Vu mode";
-std::string const MatrixModeVu::s_descriptionStr =
+std::string const MatrixModeVu::s_DESCRIPTION_STR =
     "Use the matrix as a VU meter.";
 
 void MatrixModeVu::update()

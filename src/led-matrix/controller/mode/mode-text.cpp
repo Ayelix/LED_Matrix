@@ -1,22 +1,43 @@
 #include <led-matrix/controller/mode/mode-text.hpp>
 
-MatrixMode::MatrixModeID MatrixModeText::s_modeID =
+#include <stdexcept>
+
+#include <led-matrix/controller/mode/setting/setting.hpp>
+#include <led-matrix/controller/mode/setting/setting-string.hpp>
+
+MatrixMode::MatrixModeID const MatrixModeText::s_MODE_ID =
     MatrixMode::MATRIX_MODE_ID_TEXT;
-long int MatrixModeText::s_delayMs = 50;
-std::string const MatrixModeText::s_nameStr =
+long int const MatrixModeText::s_DELAY_MS = 50;
+std::string const MatrixModeText::s_NAME_STR =
     "Text mode";
-std::string const MatrixModeText::s_descriptionStr =
+std::string const MatrixModeText::s_DESCRIPTION_STR =
     "Scroll text across the matrix.";
     
-std::string const MatrixModeText::s_defaultText =
+std::string const MatrixModeText::s_DEFAULT_TEXT =
     "Text mode! ";
+    
+MatrixModeText::MatrixModeText(MatrixDriver * driver)
+  : MatrixMode(s_MODE_ID, s_NAME_STR, s_DESCRIPTION_STR, s_DELAY_MS, driver)
+{
+    // Add the setting for text to scroll across the matrix
+    m_textSetting = (MatrixSettingString *) MatrixSetting::createSetting(
+        MatrixSetting::MATRIX_SETTING_ID_STRING, "Scrolling Text",
+        "Text to scroll across the matrix");
+    if (NULL == m_textSetting)
+    {
+        throw std::runtime_error(
+            "MatrixModeText::MatrixModeText(): Unable to create text setting");
+    }
+    m_textSetting->setString(s_DEFAULT_TEXT);
+    m_settings.push_back(m_textSetting);
+}
 
 void MatrixModeText::begin()
 {
     MatrixMode::begin();
     
-    //TODO: get current text from settings
-    m_text = s_defaultText + ' ';
+    // Get current text from the corresponding setting
+    m_text = m_textSetting->getString() + ' ';
     
     // Reset text positions
     m_textPosition = m_text.begin();

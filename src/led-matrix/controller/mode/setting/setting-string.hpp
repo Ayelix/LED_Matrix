@@ -15,7 +15,7 @@ public:
         , m_value(initialString) {};
     
     // Get/set the string
-    std::string getString() {return m_value;}
+    std::string getString() const {return m_value;}
     void setString(std::string const & newString) {m_value = newString;}
     
 private:

@@ -16,11 +16,22 @@
 MatrixMode::MatrixMode(MatrixModeID id, std::string name, std::string description,
     long int delayMs, MatrixDriver * driver)
  : m_driver(driver)
+ , m_settings()
  , m_nameStr(name), m_descriptionStr(description)
  , m_delayMs(delayMs)
 {
     checkID(id, "MatrixMode::MatrixMode()");
     m_id = id;
+}
+
+MatrixMode::~MatrixMode()
+{
+    // Destroy any settings in the settings list
+    std::vector<MatrixSetting *>::iterator iter = m_settings.begin();
+    for ( ; iter < m_settings.end(); iter++)
+    {
+        MatrixSetting::destroySetting(*iter);
+    }
 }
 
 void MatrixMode::begin()
