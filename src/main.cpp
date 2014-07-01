@@ -131,7 +131,10 @@ int main (int argc, char * argv[])
             }
         }
         driver->update();
-        sleep(1);
+        nanosleep(&delay, NULL);
+        nanosleep(&delay, NULL);
+        nanosleep(&delay, NULL);
+        nanosleep(&delay, NULL);
         
         // Write a checkerboard pattern then toggle all pixels a few times
         for (size_t y = 0; y < driver->ROWS; y++)
@@ -201,7 +204,8 @@ int main (int argc, char * argv[])
         DBG_PRINTF("\n");
         
         DBG_PRINTF("Done testing, starting main loop in 1 second.\n");
-        sleep(1);
+        nanosleep(&delay, NULL);
+        nanosleep(&delay, NULL);
     }
     
     DBG_PRINTF("\nThe following options are available:\n");
