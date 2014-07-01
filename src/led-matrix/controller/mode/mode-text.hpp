@@ -22,16 +22,6 @@ private:
     static std::string const s_NAME_STR;
     static std::string const s_DESCRIPTION_STR;
     
-    // Indexes of settings in the settings list
-    enum
-    {
-        // Text to be scrolled, saved in m_textSetting
-        SETTING_INDEX_TEXT, //MatrixSettingString
-        
-        // Number of settings used by the mode
-        SETTING_COUNT
-    };
-    
     // Setting to modify text being scrolled
     MatrixSettingString * m_textSetting;
     
