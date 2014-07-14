@@ -1,0 +1,79 @@
+********************************************************************************
+JSON Objects
+********************************************************************************
+    "mode" - Contains information about a matrix mode in the following members:
+        "name" - string, name of the mode.  Ex: "Text mode"
+        "description" - string, further description of the mode.
+            Ex: "Scroll text aross the matrix"
+        "index" - int, index of the mode in the mode list.  Required to access
+            the mode and its settings.
+    "setting" - Contains information about a setting for a mode in the following
+        members:
+        "name" - string, name of the setting.  Ex: "Scrolling text"
+        "description" - string, further description of the setting.
+            Ex: "Text to scroll across the matrix"
+        "type" - string, identifies the type of value this setting takes.
+            Described in the next section.
+        <value parameter> - variable type, gives the current value of the
+            setting.  The name of this member depends on the setting type (see
+            next section).
+        "index" - int, index of the setting in its mode's settings list.
+            Required to access the setting.
+
+
+********************************************************************************
+Setting Types
+********************************************************************************
+There are several types of settings.  Each type takes a different type of value
+to adjust the behavior of a mode.  To make sure the right type of value is being
+used with the /setSetting request, each type of setting requires a different
+parameter name for the value to be set.  Currently, all value parameter names
+are the same as the type name for the setting, but this may change.  The types
+of settings, listed by their corresponding "type" string, are:
+
+"string" - takes a string value in the "string" parameter.
+"number" - takes an integer or floating-point value in the "number" parameter.
+
+
+********************************************************************************
+Request Paths
+********************************************************************************
+
+/getModes - get all available modes
+    Example:    /getModes
+    Params:     none
+    Success:    Status 200 OK with mode list in JSON body with the form:
+                {
+                  "numModes" : <number of available modes>,
+                  "modes": [<array of "mode" objects as described above>],
+                  "currentMode" : <index of current mode>
+                }
+    Error:      Status other than 200 OK with optional string description in
+                body.
+  
+/setMode - update current mode
+    Example:    /setMode?mode=1
+    Params:     mode - index of the mode to set as current mode.
+    Success:    Status 200 OK with same output as /getModes.
+    Error:      Status other than 200 OK with optional string description in
+                body.
+
+/getSettings - get available settings for a mode
+    Example:    /getSettings?mode=1
+    Params:     mode - index of the mode for which settings are returned.
+    Success:    Status 200 OK with mode and settings in JSON body with the form:
+                {
+                  "mode": <"mode" object as described above>,
+                  "numSettings": <number of available settings for the mode>,
+                  "settings": [<array of "setting" objects as described above>]
+                }
+
+/setSetting - change a setting for a mode
+    Example:    /setSetting?mode=1&setting=1&string="New%20text"
+    Params:     mode - index of the mode whose setting is being changed.
+                setting - index of the setting in the mode's setting list.
+                <value parameter> - new value for the setting (value parameter
+                    name depends on the setting type).
+    Success:    Status 200 OK with same output as /getSettings.
+    Error:      Status other than 200 OK with optional string description in
+                body.

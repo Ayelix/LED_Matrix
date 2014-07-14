@@ -28,6 +28,9 @@ private:
     // Handle requests for /
     void rootHandler(pion::http::request_ptr& _httpRequest, 
         pion::tcp::connection_ptr& _tcpConn);
+    // Handle requests for /setMode
+    void setModeHandler(pion::http::request_ptr& _httpRequest, 
+        pion::tcp::connection_ptr& _tcpConn);
     // Handle requests for /mode
     void modeHandler(pion::http::request_ptr& _httpRequest, 
         pion::tcp::connection_ptr& _tcpConn);
