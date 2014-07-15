@@ -7,6 +7,8 @@
 #include <boost/lockfree/queue.hpp>
 #include <string>
 
+#include <pion/http/response_writer.hpp>
+
 #include <led-matrix/controller/controller.hpp>
 
 class MatrixWebserver : public pion::http::server
@@ -22,13 +24,13 @@ private:
     // List of available modes from the controller
     std::vector<MatrixMode *> const & m_controllerModes;
     
-    // Handle requests for /
+    // Request handlers
     void rootHandler(pion::http::request_ptr& _httpRequest, 
         pion::tcp::connection_ptr& _tcpConn);
-    // Handle requests for /setMode
+    void getModesHandler(pion::http::request_ptr& _httpRequest, 
+        pion::tcp::connection_ptr& _tcpConn);
     void setModeHandler(pion::http::request_ptr& _httpRequest, 
         pion::tcp::connection_ptr& _tcpConn);
-    // Handle requests for /mode
     void modeHandler(pion::http::request_ptr& _httpRequest, 
         pion::tcp::connection_ptr& _tcpConn);
         

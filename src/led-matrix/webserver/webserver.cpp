@@ -3,7 +3,6 @@
 #include <vector>
 #include <sstream>
 
-#include <pion/http/response_writer.hpp>
 #include <led-matrix/webserver/json-utils.hpp>
  
 MatrixWebserver::MatrixWebserver(unsigned int port,
@@ -15,6 +14,8 @@ MatrixWebserver::MatrixWebserver(unsigned int port,
     // Add resource handlers
     add_resource("/",
         boost::bind(&MatrixWebserver::rootHandler, this, _1, _2));
+    add_resource("/getModes",
+        boost::bind(&MatrixWebserver::getModesHandler, this, _1, _2));
     add_resource("/setMode",
         boost::bind(&MatrixWebserver::setModeHandler, this, _1, _2));
     add_resource("/mode",
@@ -31,7 +32,25 @@ void MatrixWebserver::rootHandler(pion::http::request_ptr& httpRequest,
             boost::bind(&pion::tcp::connection::finish, tcpConn)));
     pion::http::response& r = writer->get_response();
     
-    // Return the getModes JSON
+    writer->write("Nothing to do here yet.\n");
+    
+    r.set_status_code(pion::http::types::RESPONSE_CODE_OK);
+    r.set_status_message(pion::http::types::RESPONSE_MESSAGE_OK);
+
+    writer->send();
+}
+
+void MatrixWebserver::getModesHandler(pion::http::request_ptr& httpRequest,
+    pion::tcp::connection_ptr& tcpConn)
+{
+    pion::http::response_writer_ptr writer(
+        pion::http::response_writer::create(
+            tcpConn, 
+            *httpRequest, 
+            boost::bind(&pion::tcp::connection::finish, tcpConn)));
+    pion::http::response& r = writer->get_response();
+    
+    // Write the getModes JSON response
     r.set_content_type("application/json");
     writer->write(JSONUtils::getModes(m_controller));
     
@@ -75,14 +94,14 @@ void MatrixWebserver::setModeHandler(pion::http::request_ptr& httpRequest,
             writer->write(modeStr);
         }
         else
-        {   
-            // Get the mode corresponding to the parameter
-            MatrixMode const * const mode = m_controllerModes.at(modeInt);
-            writer->write("Set mode to " + mode->getName() + ":\n");
-            writer->write(mode->getDescription());
-            
+        {
             // Update the controller's mode
             m_controller->setMode(modeInt);
+            
+            // Write the getModes JSON response (setMode has the same response
+            // as getModes)
+            r.set_content_type("application/json");
+            writer->write(JSONUtils::getModes(m_controller));
             
             r.set_status_code(pion::http::types::RESPONSE_CODE_OK);
             r.set_status_message(pion::http::types::RESPONSE_MESSAGE_OK);

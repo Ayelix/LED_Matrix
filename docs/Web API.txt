@@ -50,7 +50,7 @@ Request Paths
                 }
     Error:      Status other than 200 OK with optional string description in
                 body.
-  
+
 /setMode - update current mode
     Example:    /setMode?mode=1
     Params:     mode - index of the mode to set as current mode.
@@ -67,6 +67,8 @@ Request Paths
                   "numSettings": <number of available settings for the mode>,
                   "settings": [<array of "setting" objects as described above>]
                 }
+    Error:      Status other than 200 OK with optional string description in
+                body.
 
 /setSetting - change a setting for a mode
     Example:    /setSetting?mode=1&setting=1&string="New%20text"
