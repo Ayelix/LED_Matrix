@@ -28,6 +28,9 @@ public:
     // Get the current mode
     // Thread-safe
     MatrixMode * getMode() const {return m_modes.at(m_currentModeIndex);}
+    // Get the index of the current mode
+    // Thread-safe
+    unsigned int getModeIndex() const {return m_currentModeIndex;}
     // Set the current mode by a pointer to the mode itself
     // Thread-safe
     void setMode(MatrixMode const * mode);

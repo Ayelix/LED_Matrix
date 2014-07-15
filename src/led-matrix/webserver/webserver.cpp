@@ -4,6 +4,7 @@
 #include <sstream>
 
 #include <pion/http/response_writer.hpp>
+#include <led-matrix/webserver/json-utils.hpp>
  
 MatrixWebserver::MatrixWebserver(unsigned int port,
     MatrixController * controller)
@@ -11,27 +12,6 @@ MatrixWebserver::MatrixWebserver(unsigned int port,
     , m_controller(controller)
     , m_controllerModes(m_controller->getModes())
 {
-    // Build the main page HTML, it shouldn't change after startup
-    m_mainPageHTML = "<html><body>\n";
-    m_mainPageHTML += "Update the current mode:<br>\n";
-    // Create a link for each available mode
-    for (unsigned int i = 0; i < m_controllerModes.size(); i++)
-    {
-        MatrixMode const * const mode = m_controllerModes.at(i);
-        
-        std::ostringstream oss;
-        oss << "/mode?mode=" << i;
-        std::string const href = oss.str();
-        
-        oss.str(std::string());
-        oss.clear();
-        oss << i << ": " << mode->getName() + " - " + mode->getDescription();
-        std::string const linkText = oss.str();
-        
-        m_mainPageHTML += buildLink(href, linkText) + "<br>\n";
-    }
-    m_mainPageHTML += "</body></html>";
-    
     // Add resource handlers
     add_resource("/",
         boost::bind(&MatrixWebserver::rootHandler, this, _1, _2));
@@ -51,7 +31,9 @@ void MatrixWebserver::rootHandler(pion::http::request_ptr& httpRequest,
             boost::bind(&pion::tcp::connection::finish, tcpConn)));
     pion::http::response& r = writer->get_response();
     
-    writer->write(m_mainPageHTML);
+    // Return the getModes JSON
+    r.set_content_type("application/json");
+    writer->write(JSONUtils::getModes(m_controller));
     
     r.set_status_code(pion::http::types::RESPONSE_CODE_OK);
     r.set_status_message(pion::http::types::RESPONSE_MESSAGE_OK);

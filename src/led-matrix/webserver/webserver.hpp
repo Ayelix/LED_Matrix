@@ -22,9 +22,6 @@ private:
     // List of available modes from the controller
     std::vector<MatrixMode *> const & m_controllerModes;
     
-    // HTML content for the main page, built in the constructor
-    std::string m_mainPageHTML;
-    
     // Handle requests for /
     void rootHandler(pion::http::request_ptr& _httpRequest, 
         pion::tcp::connection_ptr& _tcpConn);
