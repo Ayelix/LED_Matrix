@@ -18,8 +18,8 @@ MatrixWebserver::MatrixWebserver(unsigned int port,
         boost::bind(&MatrixWebserver::getModesHandler, this, _1, _2));
     add_resource("/setMode",
         boost::bind(&MatrixWebserver::setModeHandler, this, _1, _2));
-    add_resource("/mode",
-        boost::bind(&MatrixWebserver::modeHandler, this, _1, _2));
+    add_resource("/getSettings",
+        boost::bind(&MatrixWebserver::getSettingsHandler, this, _1, _2));
 }
 
 void MatrixWebserver::rootHandler(pion::http::request_ptr& httpRequest,
@@ -111,7 +111,7 @@ void MatrixWebserver::setModeHandler(pion::http::request_ptr& httpRequest,
     writer->send();
 }
 
-void MatrixWebserver::modeHandler(pion::http::request_ptr& httpRequest,
+void MatrixWebserver::getSettingsHandler(pion::http::request_ptr& httpRequest,
     pion::tcp::connection_ptr& tcpConn)
 {
     pion::http::response_writer_ptr writer(
@@ -145,29 +145,13 @@ void MatrixWebserver::modeHandler(pion::http::request_ptr& httpRequest,
             writer->write(modeStr);
         }
         else
-        {   
-            // Get the mode corresponding to the parameter
-            MatrixMode const * const mode = m_controllerModes.at(modeInt);
+        {
+            // Get the mode for the given index
+            MatrixMode * mode = m_controllerModes.at(modeInt);
             
-            // Update the controller's mode
-            m_controller->setMode(modeInt);
-            
-            // Print out mode info
-            writer->write(mode->getName() + " - " + mode->getDescription()
-                + '\n');
-            
-            // Print out settings for the mode
-            std::vector<MatrixSetting *> const & settingsList =
-                mode->getSettings();
-            std::vector<MatrixSetting *>::const_iterator settingIter =
-                settingsList.begin();
-            unsigned int settingIndex = 0;
-            for ( ; settingIter < settingsList.end()
-                ; settingIter++, settingIndex++)
-            {
-                writer->write((*settingIter)->getName() + " - " +
-                    (*settingIter)->getDescription() + '\n');
-            }
+            // Write the getSettings JSON response
+            r.set_content_type("application/json");
+            writer->write(JSONUtils::getSettings(mode, modeInt));
             
             r.set_status_code(pion::http::types::RESPONSE_CODE_OK);
             r.set_status_message(pion::http::types::RESPONSE_MESSAGE_OK);

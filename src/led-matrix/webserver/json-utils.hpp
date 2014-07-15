@@ -23,6 +23,8 @@ namespace JSONUtils
     // mode : <mode object for the given mode index>
     // numSettings : <number of settings for the mode>
     // settings : <array of settings for the mode>
+    // The mode index is not checked for validity, it is simply used to generate
+    // the JSON output.
     std::string getSettings(MatrixMode const * mode, unsigned int modeIndex);
 };
 

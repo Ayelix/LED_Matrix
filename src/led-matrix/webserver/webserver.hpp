@@ -31,7 +31,7 @@ private:
         pion::tcp::connection_ptr& _tcpConn);
     void setModeHandler(pion::http::request_ptr& _httpRequest, 
         pion::tcp::connection_ptr& _tcpConn);
-    void modeHandler(pion::http::request_ptr& _httpRequest, 
+    void getSettingsHandler(pion::http::request_ptr& _httpRequest, 
         pion::tcp::connection_ptr& _tcpConn);
         
     // Helper to build a link in HTML
