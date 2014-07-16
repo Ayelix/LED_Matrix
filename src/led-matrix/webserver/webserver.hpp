@@ -33,6 +33,8 @@ private:
         pion::tcp::connection_ptr& _tcpConn);
     void getSettingsHandler(pion::http::request_ptr& _httpRequest, 
         pion::tcp::connection_ptr& _tcpConn);
+    void setSettingHandler(pion::http::request_ptr& _httpRequest, 
+        pion::tcp::connection_ptr& _tcpConn);
         
     // Helper to build a link in HTML
     static std::string buildLink(std::string const & href,

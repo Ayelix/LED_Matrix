@@ -65,6 +65,9 @@ namespace JSONUtils
             }
             retVal[type] = value;
             
+            // Write the setting index
+            retVal["index"] = index;
+            
             return retVal;
         }
     }
