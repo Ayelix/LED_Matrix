@@ -7,6 +7,10 @@
 
 #include <led-matrix/controller/mode/setting/setting.hpp>
 
+// Setting implementations
+#include <led-matrix/controller/mode/setting/setting-string.hpp>
+#include <led-matrix/controller/mode/setting/setting-ranged-double.hpp>
+
 namespace JSONUtils
 {
     // Anonymous namespace for "private" items
@@ -26,11 +30,41 @@ namespace JSONUtils
             unsigned int index)
         {
             Json::Value retVal;
+            
+            // Get the setting's name and description
             retVal["name"] = setting->getName();
             retVal["description"] = setting->getDescription();
-            // TODO: type
-            // TODO: value parameter
-            retVal["index"] = index;
+            
+            // Get the name for the settings' value type
+            std::string type = setting->getType();
+            retVal["type"] = type;
+            
+            // Get the setting's actual value
+            Json::Value value;
+            switch (setting->getID())
+            {
+                case MatrixSetting::MATRIX_SETTING_ID_STRING:
+                {
+                    MatrixSettingString * const settingString =
+                        (MatrixSettingString *)setting;
+                    value = settingString->getString();
+                    break;
+                }
+                case MatrixSetting::MATRIX_SETTING_ID_RANGED_DOUBLE:
+                {
+                    MatrixSettingRangedDouble * const settingRangedDouble =
+                        (MatrixSettingRangedDouble *)setting;
+                    value = settingRangedDouble->getValue();
+                    break;
+                }
+                
+                // No default case to preserve compiler warnings for unhandled enum
+                // values
+                case MatrixSetting::MATRIX_SETTING_ID_COUNT:
+                break;
+            }
+            retVal[type] = value;
+            
             return retVal;
         }
     }

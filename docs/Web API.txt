@@ -14,9 +14,9 @@ JSON Objects
             Ex: "Text to scroll across the matrix"
         "type" - string, identifies the type of value this setting takes.
             Described in the next section.
-        <value parameter> - variable type, gives the current value of the
-            setting.  The name of this member depends on the setting type (see
-            next section).
+        <value type> - variable type, gives the current value of the
+            setting.  The name and type of this member are the same as the value
+            of the "type" member (see next section).
         "index" - int, index of the setting in its mode's settings list.
             Required to access the setting.
 
@@ -27,8 +27,8 @@ Setting Types
 There are several types of settings.  Each type takes a different type of value
 to adjust the behavior of a mode.  To make sure the right type of value is being
 used with the /setSetting request, each type of setting requires a different
-parameter name for the value to be set.  Currently, all value parameter names
-are the same as the type name for the setting, but this may change.  The types
+parameter name for the value to be set.  The name of this parameter is the same
+as the type of value it accepts.  The types
 of settings, listed by their corresponding "type" string, are:
 
 "string" - takes a string value in the "string" parameter.
@@ -74,7 +74,7 @@ Request Paths
     Example:    /setSetting?mode=1&setting=1&string="New%20text"
     Params:     mode - index of the mode whose setting is being changed.
                 setting - index of the setting in the mode's setting list.
-                <value parameter> - new value for the setting (value parameter
+                <value type> - new value for the setting (value parameter
                     name depends on the setting type).
     Success:    Status 200 OK with same output as /getSettings.
     Error:      Status other than 200 OK with optional string description in

@@ -28,6 +28,10 @@ public:
     std::string getName() const {return m_nameStr;}
     std::string getDescription() const {return m_descriptionStr;}
     
+    // Get the string name for the value type used for this setting.
+    // Returns an empty string on error.
+    std::string getType() const;
+    
     // Allocate memory for and create a new setting of the given type.
     // Returns NULL or throws std::runtime_error or std::invalid_argument on
     // failure.

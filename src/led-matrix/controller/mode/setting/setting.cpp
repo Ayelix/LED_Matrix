@@ -9,6 +9,28 @@
 #include <led-matrix/controller/mode/setting/setting-string.hpp>
 #include <led-matrix/controller/mode/setting/setting-ranged-double.hpp>
 
+std::string MatrixSetting::getType() const
+{
+    switch (getID())
+    {
+        case MATRIX_SETTING_ID_STRING:
+        {
+            return "string";
+        }
+        case MATRIX_SETTING_ID_RANGED_DOUBLE:
+        {
+            return "number";
+        }
+        
+        // No default case to preserve compiler warnings for unhandled enum
+        // values
+        case MATRIX_SETTING_ID_COUNT:
+        break;
+    }
+    
+    return "";
+}
+
 MatrixSetting::MatrixSetting(MatrixSettingID id, std::string const & name,
     std::string const & description)
  : m_nameStr(name), m_descriptionStr(description)
