@@ -51,6 +51,16 @@ MatrixController::MatrixController(MatrixDriver * const driver)
     setMode(0u);
 }
 
+MatrixController::~MatrixController()
+{
+    // Free all modes in the mode list
+    std::vector<MatrixMode *>::iterator iter = m_modes.begin();
+    while (iter != m_modes.end())
+    {
+        MatrixMode::destroyMode(*iter);
+    }
+}
+
 void MatrixController::update()
 {
     // Simply call update() for the current mode
