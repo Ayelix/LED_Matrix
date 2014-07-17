@@ -4,6 +4,10 @@
 #include <sstream>
 
 #include <led-matrix/webserver/json-utils.hpp>
+
+// Setting implementations
+#include <led-matrix/controller/mode/setting/setting-string.hpp>
+#include <led-matrix/controller/mode/setting/setting-ranged-double.hpp>
  
 MatrixWebserver::MatrixWebserver(unsigned int port,
     MatrixController * controller)
@@ -203,35 +207,111 @@ void MatrixWebserver::setSettingHandler(pion::http::request_ptr& httpRequest,
             MatrixMode * mode = m_controllerModes.at(modeInt);
             std::vector<MatrixSetting *> const & settingList =
                 mode->getSettings();
-            
-            // Parse the setting parameter
-            std::string const settingStr = settingIter->second;
-            unsigned int settingInt;
-            std::istringstream iss(settingStr);
-            iss >> settingInt;
-            
-            // If parsing failed or the setting index is invalid, return an
-            // error
-            if ( ((iss.rdstate() & std::istringstream::failbit) != 0) ||
-                (settingInt >= settingList.size()))
+                
+            if (settingIter != params.end())
             {
-                writer->write("Invalid setting parameter: ");
-                writer->write(settingStr);
+                // Parse the setting parameter
+                std::string const settingStr = settingIter->second;
+                unsigned int settingInt;
+                std::istringstream iss(settingStr);
+                iss >> settingInt;
+                
+                // If parsing failed or the setting index is invalid, return an
+                // error
+                if ( ((iss.rdstate() & std::istringstream::failbit) != 0) ||
+                    (settingInt >= settingList.size()))
+                {
+                    writer->write("Invalid setting parameter: ");
+                    writer->write(settingStr);
+                }
+                else
+                {
+                    // Get the setting for the given index and its type
+                    MatrixSetting * setting = settingList.at(settingInt);
+                    std::string type = setting->getType();
+                    
+                    // Check for a parameter corresponding to the setting type
+                    pion::ihash_multimap::const_iterator valueIter =
+                        params.find(type);
+                    if (valueIter != params.end())
+                    {
+                        bool error = false;
+                        
+                        // Parse the value parameter and apply it to the setting
+                        std::string const valueStr = valueIter->second;
+                        std::istringstream iss(valueStr);
+                        switch (setting->getID())
+                        {
+                            case MatrixSetting::MATRIX_SETTING_ID_STRING:
+                            {
+                                MatrixSettingString * const settingString =
+                                    (MatrixSettingString *)setting;
+                                settingString->setString(valueStr);
+                                break;
+                            }
+                            case MatrixSetting::MATRIX_SETTING_ID_RANGED_DOUBLE:
+                            {
+                                MatrixSettingRangedDouble * const settingRangedDouble =
+                                    (MatrixSettingRangedDouble *)setting;
+                                double valueDouble;
+                                iss >> valueDouble;
+                                if ((iss.rdstate() & std::istringstream::failbit) != 0)
+                                {
+                                    error = true;
+                                }
+                                else
+                                {
+                                    settingRangedDouble->setValue(valueDouble);
+                                }
+                                break;
+                            }
+                            
+                            // No default case to preserve compiler warnings for
+                            // unhandled enum values
+                            case MatrixSetting::MATRIX_SETTING_ID_COUNT:
+                            {
+                                error = true;
+                                break;
+                            }
+                        }
+                        
+                        if (error)
+                        {
+                            writer->write("Unable to parse value into " + type
+                                + ": \"" + valueStr + "\".");
+                        }
+                        else
+                        {
+                            // Write the getSettings JSON response (setSetting
+                            // has the same response as getSettings).
+                            r.set_content_type("application/json");
+                            writer->write(
+                                JSONUtils::getSettings(mode, modeInt));
+                            
+                            r.set_status_code(
+                                pion::http::types::RESPONSE_CODE_OK);
+                            r.set_status_message(
+                                pion::http::types::RESPONSE_MESSAGE_OK);
+                        }
+                        
+                    }
+                    else
+                    {
+                        writer->write("Setting " + settingStr + " for mode "
+                            + modeStr + " is of type " + type + " but no \""
+                            + type + "\" parameter was given.");
+                    }
+                }
             }
             else
             {
-                // Get the setting for the given index
-                //MatrixSetting * setting = settingList.at(settingInt);
-                
-                // Write the getSettings JSON response (setSetting has the same
-                // response as getSettings).
-                r.set_content_type("application/json");
-                writer->write(JSONUtils::getSettings(mode, modeInt));
-                
-                r.set_status_code(pion::http::types::RESPONSE_CODE_OK);
-                r.set_status_message(pion::http::types::RESPONSE_MESSAGE_OK);
+                writer->write("No setting parameter given.");
             }
         }
+    }
+    else
+    {
+        writer->write("No mode parameter given.");
     }
 
     writer->send();
