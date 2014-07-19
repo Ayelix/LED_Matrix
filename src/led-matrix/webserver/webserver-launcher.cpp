@@ -4,11 +4,12 @@
 
 static MatrixWebserver * server = NULL;
 
-void launchWebserver(unsigned int port, MatrixController * controller)
+void launchWebserver(unsigned int port, std::string const & filesDir,
+    MatrixController * controller)
 {
     if (NULL == server)
     {
-        server = new MatrixWebserver(port, controller);
+        server = new MatrixWebserver(port, filesDir, controller);
         server->start();
     }
 }

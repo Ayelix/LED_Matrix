@@ -5,8 +5,9 @@
  
 #include <led-matrix/controller/controller.hpp>
 
-// Start the webserver listening on the given port
-void launchWebserver(unsigned int port, MatrixController * controller);
+// Start the webserver
+void launchWebserver(unsigned int port, std::string const & filesDir,
+    MatrixController * controller);
 
 // Stop the webserver started with launchWebserver
 void stopWebserver();

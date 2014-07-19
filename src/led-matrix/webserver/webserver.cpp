@@ -4,14 +4,17 @@
 #include <sstream>
 
 #include <led-matrix/webserver/json-utils.hpp>
+#include <led-matrix/webserver/file-serving.hpp>
 
 // Setting implementations
 #include <led-matrix/controller/mode/setting/setting-string.hpp>
 #include <led-matrix/controller/mode/setting/setting-ranged-double.hpp>
  
 MatrixWebserver::MatrixWebserver(unsigned int port,
+    std::string const & filesDir,
     MatrixController * controller)
     : pion::http::server(port)
+    , m_filesDir(filesDir)
     , m_controller(controller)
     , m_controllerModes(m_controller->getModes())
 {
@@ -38,10 +41,14 @@ void MatrixWebserver::rootHandler(pion::http::request_ptr& httpRequest,
             boost::bind(&pion::tcp::connection::finish, tcpConn)));
     pion::http::response& r = writer->get_response();
     
-    writer->write("Nothing to do here yet.\n");
+    std::string const filePath = m_filesDir + httpRequest->get_resource();
     
-    r.set_status_code(pion::http::types::RESPONSE_CODE_OK);
-    r.set_status_message(pion::http::types::RESPONSE_MESSAGE_OK);
+    std::string statusMessage;
+    unsigned int statusCode = FileServing::serveFile(filePath, writer,
+        statusMessage);
+    
+    r.set_status_code(statusCode);
+    r.set_status_message(statusMessage);
 
     writer->send();
 }

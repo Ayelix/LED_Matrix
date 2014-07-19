@@ -18,6 +18,7 @@
 #include <led-matrix/controller/mode/setting/setting.hpp>
 
 unsigned int const DEFAULT_PORT = 8080;
+std::string const DEFAULT_FILES_DIR = "files";
 
 static void usage(char const * const program_name)
 {
@@ -27,8 +28,10 @@ static void usage(char const * const program_name)
     "    -s  Skip startup tests.\n"""
     "    -p  Specify the port on which the server will receive incoming connections.\n"""
     "        Default port: %u.\n"""
+    "    -f  Specify the root directory from which files should be served.\n"""
+    "        Default directory: %s\n"""
     "\n",
-    program_name, DEFAULT_PORT);
+    program_name, DEFAULT_PORT, DEFAULT_FILES_DIR.c_str());
 }
 
 /* main
@@ -40,10 +43,11 @@ int main (int argc, char * argv[])
     bool emulate = false;
     bool runTests = true;
     unsigned int port = DEFAULT_PORT;
+    std::string filesDir = DEFAULT_FILES_DIR;
     
     // Parse command-line arguments
     int c;
-    while ((c = getopt(argc, argv, "esp:")) != -1)
+    while ((c = getopt(argc, argv, "esp:f:")) != -1)
     {
         switch (c)
         {
@@ -69,6 +73,12 @@ int main (int argc, char * argv[])
                 usage(argv[0]);
                 exit(EXIT_FAILURE);
             }
+            break;
+        }
+        
+        case 'f':
+        {
+            filesDir = optarg;
             break;
         }
         
@@ -110,8 +120,9 @@ int main (int argc, char * argv[])
     DBG_PRINTF("Created controller.\n");
     
     // Start the webserver
-    launchWebserver(port, &controller);
-    DBG_PRINTF("Started webserver on port %u.\n", port);
+    launchWebserver(port, filesDir, &controller);
+    DBG_PRINTF("Started webserver on port %u serving files from %s.\n", port,
+        filesDir.c_str());
     
     // Run startup tests if appropriate
     if (runTests)

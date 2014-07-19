@@ -14,11 +14,15 @@
 class MatrixWebserver : public pion::http::server
 {
 public:
-    // Create a webserver which will listen on the given port when started and
-    // will use the given MatrixController.
-    MatrixWebserver(unsigned int port, MatrixController * controller);
+    // Create a webserver which will listen on the given port when started,
+    // serve files from the given directory (do not include a trailing '/'),
+    // and will use the given MatrixController.
+    MatrixWebserver(unsigned int port, std::string const & filesDir,
+        MatrixController * controller);
 
 private:
+    // Root directory for file-serving
+    std::string const m_filesDir;
     // MatrixController used by the webserver
     MatrixController * const m_controller;
     // List of available modes from the controller
