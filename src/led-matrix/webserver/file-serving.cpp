@@ -4,6 +4,7 @@
 #include <boost/interprocess/mapped_region.hpp>
 
 #include <led-matrix/debug/debug.hpp>
+#include <led-matrix/webserver/mime-types.hpp>
 
 namespace FileServing
 {
@@ -47,11 +48,21 @@ namespace FileServing
             statusMessage = pion::http::types::RESPONSE_MESSAGE_NOT_FOUND;
             return pion::http::types::RESPONSE_CODE_NOT_FOUND;
         }
-        DBG_PRINTF("Mapped file \"%s\" at %p with size %zu.\n",
-            path.c_str(), region.get_address(), region.get_size());
         
+        // Get the extension for the file (if any)
+        std::string extension = "";
+        unsigned dotPos = path.find_last_of('.');
+        if (std::string::npos != dotPos)
+        {
+            extension = path.substr(dotPos+1);
+        }
         
-        //TODO: get file MIME-type.
+        // Get the MIME-type for the extension, if any is known
+        std::string mimeType = MimeTypes::getMimeType(extension);
+        if (!mimeType.empty())
+        {
+            writer->get_response().set_content_type(mimeType);
+        }
         
         // Write the file contents to the writer
         writer->write(region.get_address(), region.get_size());

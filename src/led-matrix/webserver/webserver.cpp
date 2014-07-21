@@ -5,6 +5,7 @@
 
 #include <led-matrix/webserver/json-utils.hpp>
 #include <led-matrix/webserver/file-serving.hpp>
+#include <led-matrix/webserver/mime-types.hpp>
 
 // Setting implementations
 #include <led-matrix/controller/mode/setting/setting-string.hpp>
@@ -29,6 +30,9 @@ MatrixWebserver::MatrixWebserver(unsigned int port,
         boost::bind(&MatrixWebserver::getSettingsHandler, this, _1, _2));
     add_resource("/setSetting",
         boost::bind(&MatrixWebserver::setSettingHandler, this, _1, _2));
+        
+    // Initialize MIME-types
+    MimeTypes::initialize();
 }
 
 void MatrixWebserver::rootHandler(pion::http::request_ptr& httpRequest,
@@ -46,11 +50,27 @@ void MatrixWebserver::rootHandler(pion::http::request_ptr& httpRequest,
     std::string statusMessage;
     unsigned int statusCode = FileServing::serveFile(filePath, writer,
         statusMessage);
-    
-    r.set_status_code(statusCode);
-    r.set_status_message(statusMessage);
-
-    writer->send();
+        
+    if (pion::http::types::RESPONSE_CODE_NOT_FOUND == statusCode)
+    {
+        handle_not_found_request(httpRequest, tcpConn);
+    }
+    if (pion::http::types::RESPONSE_CODE_FORBIDDEN == statusCode)
+    {
+        handle_forbidden_request(httpRequest, tcpConn,
+            "msg");
+    }
+    if (pion::http::types::RESPONSE_CODE_SERVER_ERROR == statusCode)
+    {
+        handle_server_error(httpRequest, tcpConn,
+            "Failed to access file");
+    }
+    else
+    {
+        r.set_status_code(statusCode);
+        r.set_status_message(statusMessage);
+        writer->send();
+    }
 }
 
 void MatrixWebserver::getModesHandler(pion::http::request_ptr& httpRequest,
