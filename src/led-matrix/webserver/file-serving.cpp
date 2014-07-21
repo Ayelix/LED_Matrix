@@ -17,9 +17,6 @@ namespace FileServing
         pion::http::response_writer_ptr writer,
         std::string & statusMessage)
     {
-        writer->write("FileServing::serveFile(): serving file at "
-            + path + '\n');
-        
         // Check the given path for any ".."s or "~"s, return FORBIDDEN if there
         // are any
         if ( (path.find("..") != std::string::npos) ||
@@ -55,7 +52,9 @@ namespace FileServing
         
         
         //TODO: get file MIME-type.
-        //TODO: memory-map the file and write it to the writer.
+        
+        // Write the file contents to the writer
+        writer->write(region.get_address(), region.get_size());
         
         statusMessage = pion::http::types::RESPONSE_MESSAGE_OK;
         return pion::http::types::RESPONSE_CODE_OK;
