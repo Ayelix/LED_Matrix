@@ -18,7 +18,7 @@
 #include <led-matrix/controller/mode/setting/setting.hpp>
 
 unsigned int const DEFAULT_PORT = 8080;
-std::string const DEFAULT_FILES_DIR = "files";
+std::string const DEFAULT_FILES_DIR = "webfiles";
 
 static void usage(char const * const program_name)
 {
@@ -30,6 +30,7 @@ static void usage(char const * const program_name)
     "        Default port: %u.\n"""
     "    -f  Specify the root directory from which files should be served.\n"""
     "        Default directory: %s\n"""
+    "    -h  Show this usage output.\n"""
     "\n",
     program_name, DEFAULT_PORT, DEFAULT_FILES_DIR.c_str());
 }
@@ -47,7 +48,7 @@ int main (int argc, char * argv[])
     
     // Parse command-line arguments
     int c;
-    while ((c = getopt(argc, argv, "esp:f:")) != -1)
+    while ((c = getopt(argc, argv, "esp:f:h")) != -1)
     {
         switch (c)
         {
@@ -82,6 +83,7 @@ int main (int argc, char * argv[])
             break;
         }
         
+        case 'h':
         default:
         {
             usage(argv[0]);

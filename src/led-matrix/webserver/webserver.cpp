@@ -45,7 +45,14 @@ void MatrixWebserver::rootHandler(pion::http::request_ptr& httpRequest,
             boost::bind(&pion::tcp::connection::finish, tcpConn)));
     pion::http::response& r = writer->get_response();
     
-    std::string const filePath = m_filesDir + httpRequest->get_resource();
+    // Build the file path.  Special case: if the root resource was requested,
+    // attempt to serve "index.html".
+    std::string resource = httpRequest->get_resource();
+    if ("/" == resource)
+    {
+        resource = "/index.html";
+    }
+    std::string const filePath = m_filesDir + resource;
     
     std::string statusMessage;
     unsigned int statusCode = FileServing::serveFile(filePath, writer,
