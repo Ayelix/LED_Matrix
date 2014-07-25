@@ -14,22 +14,22 @@ function buildModeTable(modesData) {
             var nameCell = "<td>" + this.name + "</td>"
             var descriptionCell = "<td>" + this.description + "</td>";
             
-            // Write the button cell, disabling the button if it is the current mode
-            var buttonCell =
-                $('<button/>', {type: 'button', text: 'Enter mode'})
-                .on(
+            var row = $('<tr/>').append(nameCell, descriptionCell);
+            
+            // If the row is not the current mode, make a click update the mode
+            if (!isCurrentMode)
+            {
+                row.addClass("clickableRow")
+                    .on(
                     "click",
                     {index: this.index},
-                    function(event) {onModeButtonClick(event.data.index);})
-                .wrap('<td></td>').closest('td');
-            if (isCurrentMode)
+                    function(event) {onModeButtonClick(event.data.index);});
+            }
+            else
             {
-                buttonCell.find("button")
-                    .attr("disabled", "disabled")
-                    .text("Current mode");
+                row.addClass("nonClickableRow");
             }
             
-            var row = $('<tr/>').append(nameCell, descriptionCell, buttonCell)
             $('#modesTable').append(row);
         }); // end (modesData.modes).each
     }

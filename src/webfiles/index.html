@@ -15,15 +15,24 @@
 <style>
 table,th,td
 {
-border:1px solid black;
+    border:1px solid black;
 }
 table
 {
-border-collapse: collapse;
+    border-collapse: collapse;
 }
 th,td
 {
-padding:10px;
+    padding:10px;
+}
+.nonClickableRow
+{
+    background-color: #eee;
+}
+.clickableRow:hover
+{
+    background-color: #ccc;
+    cursor: pointer;
 }
 </style>
 
@@ -42,13 +51,16 @@ $(document).ready( function() {
 
 <body>
 
+<div id="intro">
+Click a row to enter that mode.  Current mode is shown with grey background.
+</div>
+<br>
 <div id="modes">
 <table id="modesTable">
 <thead>
   <tr>
     <th>Name</th>
     <th>Description</th>
-    <th>Enter Mode</th>
   </tr>
 </thead>
 </table>
