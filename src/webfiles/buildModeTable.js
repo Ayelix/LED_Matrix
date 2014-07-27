@@ -10,17 +10,27 @@ function buildModeTable(modesData) {
             // Check if the mode is the matrix's current mode
             var isCurrentMode = (this.index == modesData.currentMode);
             
-            // Write the name and description cells
-            var nameCell = "<td>" + this.name + "</td>"
-            var descriptionCell = "<td>" + this.description + "</td>";
+            // Create the name and description cells
+            var nameCell = $('<td/>').text(this.name);
+            var descriptionCell = $('<td/>').text(this.description);
             
-            var row = $('<tr/>').append(nameCell, descriptionCell);
+            // Create the settings cell, making it clickable to open settings
+            // for the mode.
+            var settingsCell = $('<td/>').width(100)
+                .addClass("settingsCell")
+                .on(
+                    "click",
+                    {index: this.index},
+                    function(event) {onSettingsButtonClick(event.data.index);});
             
-            // If the row is not the current mode, make a click update the mode
+            var row = $('<tr/>');
+            
+            // If the row is not the current mode, make name/description cells
+            // clickable to change the mode.
             if (!isCurrentMode)
             {
-                row.addClass("clickableRow")
-                    .on(
+                row.addClass("clickableRow");
+                (nameCell, descriptionCell).on(
                     "click",
                     {index: this.index},
                     function(event) {onModeButtonClick(event.data.index);});
@@ -30,6 +40,8 @@ function buildModeTable(modesData) {
                 row.addClass("nonClickableRow");
             }
             
+            // Add the cells to the row and add the row to the table
+            row.append(nameCell, descriptionCell, settingsCell);
             $('#modesTable').append(row);
         }); // end (modesData.modes).each
     }
@@ -51,3 +63,36 @@ function onModeButtonClick(modeIndex) {
             $(document.body).append("Unable to change mode, try again.<br>");
         });
 } // end onModeButtonClick
+
+function onSettingsButtonClick(modeIndex) {
+    // Remove any existing settings row(s) from the table
+    $('.settingsRow').remove();
+    
+    // Build the settings row for the mode
+    var settingsCell = $('<td/>').attr('colspan', 3).text("Loading settings...");
+    var settingsRow = $('<tr/>').addClass("settingsRow").append(settingsCell);
+    
+    // Load the settings for the mode
+    $.get(
+        "getSettings?mode=" + modeIndex,
+        function(data) {buildSettingsCell(settingsCell, data);},
+        "json")
+        .fail( function() {
+            settingsCell.text("Unable to load settings, try again.");
+        });
+    
+    // Find the row for the mode and insert the new row after it
+    $('#modesTable >tbody >tr').eq(modeIndex).after(settingsRow);
+} // end onSettingsButtonClick
+
+function buildSettingsCell(settingsCell, settingsData)
+{
+    // Clear the settings cell
+    settingsCell.empty();
+    
+    $(settingsData.settings).each( function() {
+        settingsCell.append('<b>' + this.name + '</b><br>');
+        settingsCell.append(this.description + '<br>');
+        settingsCell.append(this.type + '<br><br>');
+    }); // end (settingsData.settings).each
+}

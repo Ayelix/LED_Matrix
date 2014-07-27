@@ -15,24 +15,32 @@
 <style>
 table,th,td
 {
-    border:1px solid black;
+    border: 1px solid black;
 }
 table
 {
+    width: 700px;
     border-collapse: collapse;
 }
 th,td
 {
-    padding:10px;
+    padding: 10px;
 }
 .nonClickableRow
 {
-    background-color: #eee;
+    background-color: #ADE;
 }
 .clickableRow:hover
 {
-    background-color: #ccc;
+    background-color: #FF9;
     cursor: pointer;
+}
+.settingsCell:hover
+{
+    background-color: #AFA;
+}
+.settingsRow
+{
 }
 </style>
 
@@ -52,7 +60,9 @@ $(document).ready( function() {
 <body>
 
 <div id="intro">
-Click a row to enter that mode.  Current mode is shown with grey background.
+Click a row to enter that mode.<br>
+Current mode is shown with grey background.<br>
+Click the Settings cell to open the settings for a mode.<br>
 </div>
 <br>
 <div id="modes">
@@ -61,6 +71,7 @@ Click a row to enter that mode.  Current mode is shown with grey background.
   <tr>
     <th>Name</th>
     <th>Description</th>
+    <th>Settings</th>
   </tr>
 </thead>
 </table>
