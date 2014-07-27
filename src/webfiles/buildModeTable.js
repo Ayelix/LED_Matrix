@@ -93,6 +93,6 @@ function buildSettingsCell(settingsCell, settingsData)
     $(settingsData.settings).each( function() {
         settingsCell.append('<b>' + this.name + '</b><br>');
         settingsCell.append(this.description + '<br>');
-        settingsCell.append(this.type + '<br><br>');
+        settingsCell.append(this.type + ' = ' + this[this.type] + '<br><br>');
     }); // end (settingsData.settings).each
 }
