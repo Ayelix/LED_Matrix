@@ -87,12 +87,58 @@ function onSettingsButtonClick(modeIndex) {
 
 function buildSettingsCell(settingsCell, settingsData)
 {
-    // Clear the settings cell
-    settingsCell.empty();
+    // Build a form to hold the settings' info and inputs
+    var settingsForm = $('<form/>');
     
-    $(settingsData.settings).each( function() {
-        settingsCell.append('<b>' + this.name + '</b><br>');
-        settingsCell.append(this.description + '<br>');
-        settingsCell.append(this.type + ' = ' + this[this.type] + '<br><br>');
+    $(settingsData.settings).each( function(index, setting) {
+        // Write the name, description, and current value
+        settingsForm.append('<b>' + setting.name + '</b><br>');
+        settingsForm.append(setting.description + '.<br>');
+        settingsForm.append('Current value: ' + setting[setting.type] + '<br>');
+        
+        // Add a field to accept a new value
+        settingsForm.append('New value:');
+        var settingInput = $('<input>').attr('type', 'text')
+            .attr('data-modeIndex', settingsData.mode.index)
+            .attr('data-settingIndex', setting.index)
+            .attr('data-type', setting.type);
+        settingsForm.append(settingInput);
+        
+        settingsForm.append('<br><br>');
     }); // end (settingsData.settings).each
+    
+    // Add the submit button
+    $('<input>').attr('type', 'submit').attr('value', 'Update Settings')
+        //.click(function(event) {submitSettings(settingsForm);})
+        .appendTo(settingsForm);
+        
+    // Set up the form's submit action
+    settingsForm.submit( function(event) {
+        event.preventDefault();
+        
+        // Get all the text input fields
+        $(settingsForm).find(':text').each(function() {
+            // Submit the setting update for each input field that is not empty
+            if ($(this).val())
+            {
+                var requestString ='setSetting?'
+                    + 'mode=' + $(this).attr('data-modeIndex') + '&'
+                    + 'setting=' + $(this).attr('data-settingIndex') + '&'
+                    + $(this).attr('data-type') + '=' + $(this).val();
+                $.get(
+                    requestString,
+                    function() {},
+                    "json")
+                    .fail( function() {
+                        settingsForm.append(
+                            '<br>Unable to update settings, try again.');
+                    });
+            }
+        });
+        
+        return false;
+    });
+    
+    // Put the form in the settings cell
+    settingsCell.empty().append(settingsForm);
 }
