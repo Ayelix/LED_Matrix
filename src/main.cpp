@@ -19,20 +19,28 @@
 
 unsigned int const DEFAULT_PORT = 8080;
 std::string const DEFAULT_FILES_DIR = "webfiles";
+std::string const DEFAULT_LOGFILE = "matrix-log.txt";
 
 static void usage(char const * const program_name)
 {
     fprintf(stderr, "usage: %s [-es][-p port_number]\n"""
     "    -e  Enable matrix emulation mode.  In this mode, the LED matrix is emulated\n"""
-    "        onscreen instead of driving the actual matrix.\n"""
+    "        onscreen instead of driving the actual matrix.  May not be used with\n"""
+    "        the -n option.\n"""
     "    -s  Skip startup tests.\n"""
     "    -p  Specify the port on which the server will receive incoming connections.\n"""
     "        Default port: %u.\n"""
     "    -f  Specify the root directory from which files should be served.\n"""
     "        Default directory: %s\n"""
+    "    -l  Specify the log file name.\n"""
+    "        Default log file: %s\n"""
+    "    -n  No-terminal mode.  The program will run without requiring a terminal.\n"""
+    "        Log output will only be sent to the log file.  May not be used with\n"""
+    "        the -e option.\n"""
     "    -h  Show this usage output.\n"""
     "\n",
-    program_name, DEFAULT_PORT, DEFAULT_FILES_DIR.c_str());
+    program_name,
+    DEFAULT_PORT, DEFAULT_FILES_DIR.c_str(), DEFAULT_LOGFILE.c_str());
 }
 
 /* main
@@ -45,10 +53,12 @@ int main (int argc, char * argv[])
     bool runTests = true;
     unsigned int port = DEFAULT_PORT;
     std::string filesDir = DEFAULT_FILES_DIR;
+    std::string logfile = DEFAULT_LOGFILE;
+    bool noTerminal = false;
     
     // Parse command-line arguments
     int c;
-    while ((c = getopt(argc, argv, "esp:f:h")) != -1)
+    while ((c = getopt(argc, argv, "esp:f:l:nh")) != -1)
     {
         switch (c)
         {
@@ -83,6 +93,18 @@ int main (int argc, char * argv[])
             break;
         }
         
+        case 'l':
+        {
+            logfile = optarg;
+            break;
+        }
+        
+        case 'n':
+        {
+            noTerminal = true;
+            break;
+        }
+        
         case 'h':
         default:
         {
@@ -92,7 +114,15 @@ int main (int argc, char * argv[])
         }
     }
     
-    DBG_INIT();
+    // Check mutually-exclusive options
+    if (emulate && noTerminal)
+    {
+        fprintf(stderr, "Options -e and -n may not be used together.\n");
+        usage(argv[0]);
+        exit(EXIT_FAILURE);
+    }
+    
+    DBG_INIT(logfile, noTerminal);
     DBG_PRINTF("Starting in debug mode.\n");
     
     // Create the appropriate driver type
@@ -221,7 +251,10 @@ int main (int argc, char * argv[])
         nanosleep(&delay, NULL);
     }
     
-    DBG_PRINTF("\nPress q to quit or any other key to change mode.\n\n");
+    if (!noTerminal)
+    {
+        DBG_PRINTF("\nPress q to quit or any other key to change mode.\n\n");
+    }
     
     // Main loop
     int typedCh = ERR;
@@ -234,16 +267,19 @@ int main (int argc, char * argv[])
         controller.update();
         
         // Check for key press
-        if (ERR != (typedCh = getch()))
+        if (!noTerminal)
         {
-            if ('q' == typedCh)
+            if (ERR != (typedCh = getch()))
             {
-                DBG_PRINTF("q key pressed, exiting main loop.\n");
-                break;
-            }
-            else
-            {
-                controller.nextMode();
+                if ('q' == typedCh)
+                {
+                    DBG_PRINTF("q key pressed, exiting main loop.\n");
+                    break;
+                }
+                else
+                {
+                    controller.nextMode();
+                }
             }
         }
         
