@@ -20,7 +20,7 @@ CC = <none>
 CFLAGS = <none>
 
 # Libraries required by the project
-LIBS = -lncurses -lboost_atomic
+LIBS = -lncurses -lboost_atomic -lssl -lcrypto -pthread
 
 # Libraries required when building code with Pion
 PION_LIBS = -lboost_thread -lboost_system -lboost_filesystem -lboost_regex \
