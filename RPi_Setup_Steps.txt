@@ -10,7 +10,7 @@
   frg_rpi at:
   http://www.raspberrypi.org/forums/viewtopic.php?f=66&t=47944
   The steps taken were:
-  1. Add the following line to /etc/apt/sources/list:
+  1. Add the following line to /etc/apt/sources.list:
      deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi
   2. Create the file /etc/apt/preferences with the following contents:
      Package: *
