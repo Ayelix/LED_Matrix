@@ -7,7 +7,7 @@
 - Install Pion networking library development tools:
   Prebuilt package is available on the Raspbian jessie distribution.  Steps to
   install a single package from a different distribution are in a post by user
-  frg_rpi at:
+  frh_rpi at:
   http://www.raspberrypi.org/forums/viewtopic.php?f=66&t=47944
   The steps taken were:
   1. Add the following line to /etc/apt/sources.list:
