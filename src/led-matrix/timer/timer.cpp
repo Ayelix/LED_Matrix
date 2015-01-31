@@ -53,13 +53,24 @@ namespace MatrixTimer
         // Clear the timer flag
         timerFlag = false;
         
-        // Start the new timer
-        delay.it_value.tv_sec = millis / 1000;
-        long int const secInMillis = (millis / 1000) * 1000;
-        delay.it_value.tv_usec =  (millis - secInMillis) * 1000;
-        if (setitimer(ITIMER_REAL, &delay, NULL) < 0)
+        // Starting a timer via this function with 0ms delay will simply stop
+        // the timer.  However, calling this function with a 0ms delay should
+        // just cause the timer to expire immediately.
+        if (millis <= 0)
         {
-            DBG_PRINTF("ERROR: unable to set timer in startTimer.\n");
+            // The timer is already stopped above so just set the timer flag
+            timerFlag = true;
+        }
+        else
+        {
+            // Start the new timer
+            delay.it_value.tv_sec = millis / 1000;
+            long int const secInMillis = (millis / 1000) * 1000;
+            delay.it_value.tv_usec =  (millis - secInMillis) * 1000;
+            if (setitimer(ITIMER_REAL, &delay, NULL) < 0)
+            {
+                DBG_PRINTF("ERROR: unable to set timer in startTimer.\n");
+            }
         }
     }
     

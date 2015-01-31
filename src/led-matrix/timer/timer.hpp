@@ -6,7 +6,8 @@
 
 namespace MatrixTimer
 {
-    // Set the timer to go off after the given number of milliseconds
+    // Set the timer to go off after the given number of milliseconds.
+    // A 0ms delay will cause the timer to go off immediately.
     void startTimer(long int millis);
     
     // Check if the timer (set by the last call to startTimer) has expired
