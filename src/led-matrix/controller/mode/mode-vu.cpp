@@ -8,41 +8,24 @@ std::string const MatrixModeVu::s_NAME_STR =
 std::string const MatrixModeVu::s_DESCRIPTION_STR =
     "Use the matrix as a VU meter";
 
+MatrixModeVu::MatrixModeVu(MatrixDriver * driver)
+    : MatrixMode(s_MODE_ID, s_NAME_STR, s_DESCRIPTION_STR, s_DELAY_MS, driver)
+    , m_plotType(MATRIX_MODE_PLOT_TYPE_VERTICAL)
+{
+    // TODO - set up plot type setting
+}
+
 void MatrixModeVu::update()
 {
     // If the update timer has elapsed, update the animation
     if (needsUpdate())
     {
-        static bool msgPrinted = false;
-        if (!msgPrinted)
-        {
-            DBG_PRINTF("VU Mode not implemented.  Demo cycles through """
-                "available VU level display types.\n");
-                msgPrinted = true;
-        }
-        
+        // TODO - get the level from some measurement interface
         static unsigned int level = 0;
-        static int incr = 1;
-        static bool fill = false;
-        static PlotType type = MATRIX_MODE_PLOT_TYPE_VERTICAL;
+        level = (level >= 100) ? (0) : (level + 1);
         
-        level += incr;
-        if (level >= 100 || level <= 0)
-        {
-            incr = -incr;
-            if (incr > 0)
-            {
-                int intType = static_cast<int>(type) + 1;
-                if (intType >= MATRIX_MODE_PLOT_TYPE_COUNT)
-                {
-                    fill = !fill;
-                    intType = 0;
-                }
-                type = static_cast<PlotType>(intType);
-            }
-        }
-        
-        plotLevel(level, type, fill);
+        // TODO - get plot type from setting instead of m_plotType
+        plotLevel(level, m_plotType, false);
         m_driver->update();
     }
 }
