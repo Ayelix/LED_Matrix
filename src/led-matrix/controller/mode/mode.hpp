@@ -96,6 +96,7 @@ protected:
     
     // Plot the given level (in the range 0-100) on the matrix, using the given
     // plot type/style and optionally setting all pixels below the given level.
+    // Note: does not call m_driver->update().
     typedef enum
     {
         // Bar-graph type plot going from bottom to top

@@ -12,6 +12,7 @@ class MatrixModeWaves : public MatrixMode
 public:
     MatrixModeWaves(MatrixDriver * driver);
 
+    void begin();
     void update();
     
 private:
@@ -19,6 +20,9 @@ private:
     static long int const s_DELAY_MS;
     static std::string const s_NAME_STR;
     static std::string const s_DESCRIPTION_STR;
+    
+    // Counter used to track current position in the animation
+    unsigned long m_timeStep;
 };
 
 #endif

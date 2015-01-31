@@ -43,5 +43,6 @@ void MatrixModeVu::update()
         }
         
         plotLevel(level, type, fill);
+        m_driver->update();
     }
 }

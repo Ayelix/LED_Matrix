@@ -263,8 +263,6 @@ void MatrixMode::plotLevel(unsigned int level, PlotType type, bool fill)
             m_driver->setPixel(col, row);
         }
     }
-    
-    m_driver->update();
 }
 
 void MatrixMode::checkID(MatrixModeID id, std::string const & prefix)

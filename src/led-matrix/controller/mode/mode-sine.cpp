@@ -47,5 +47,6 @@ void MatrixModeSine::update()
         // Get the sine value in the range 0-100 rounded to an integer
         unsigned int const level = round( (sin(x*M_PI/180) + 1.0) * 50.0 );
         plotLevel(level, MATRIX_MODE_PLOT_TYPE_SHIFTING, false);
+        m_driver->update();
     }
 }
