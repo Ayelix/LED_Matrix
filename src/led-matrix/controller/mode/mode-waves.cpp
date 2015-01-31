@@ -42,7 +42,8 @@ void MatrixModeWaves::update()
         
         for (float col = 0; col < m_driver->COLUMNS; col++)
         {
-            // Get the current sin value for the column
+            // Get the current sin value for the column.  Divide by 2 to reduce
+            // magnitude from 2 to 1, add 0.5 to move the min from -0.5 to 0.
             // Result range: [0, 1]
             float level = sin(m_timeStep * (col / speed + 0.08)) / 2.0 + 0.5;
             // Rescale it to 0-100 for plotLevel
