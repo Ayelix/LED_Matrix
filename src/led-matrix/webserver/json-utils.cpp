@@ -10,6 +10,7 @@
 // Setting implementations
 #include <led-matrix/controller/mode/setting/setting-string.hpp>
 #include <led-matrix/controller/mode/setting/setting-ranged-double.hpp>
+#include <led-matrix/controller/mode/setting/setting-plot-type.hpp>
 
 namespace JSONUtils
 {
@@ -55,6 +56,18 @@ namespace JSONUtils
                     MatrixSettingRangedDouble * const settingRangedDouble =
                         (MatrixSettingRangedDouble *)setting;
                     value = settingRangedDouble->getValue();
+                    break;
+                }
+                case MatrixSetting::MATRIX_SETTING_ID_PLOT_TYPE:
+                {
+                    // MatrixSettingPlotType * const settingPlotType =
+                        // (MatrixSettingPlotType *)setting;
+                    // MatrixSettingPlotType::PlotTypeSettingValue plotType =
+                        // settingPlotType->getValue();
+                    // TODO - parse setting.  The value for an indexed setting
+                    // will probably have to include multiple members.  All
+                    // available values, current value index, etc.
+                    value = "Plot type setting parsing not implemented.";
                     break;
                 }
                 

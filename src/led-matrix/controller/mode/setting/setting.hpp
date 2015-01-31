@@ -16,6 +16,8 @@ public:
         MATRIX_SETTING_ID_STRING, //MatrixSettingString
         // A setting for a double which may take a value within a specific range
         MATRIX_SETTING_ID_RANGED_DOUBLE, //MatrixSettingRangedDouble
+        // A setting for a plot type (MatrixMode::PlotType)
+        MATRIX_SETTING_ID_PLOT_TYPE, //MatrixSettingPlotType
         
         // Add new settings above so the count remains correct
         MATRIX_SETTING_ID_COUNT //not a valid setting

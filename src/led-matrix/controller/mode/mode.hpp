@@ -31,6 +31,20 @@ public:
         MATRIX_MODE_ID_COUNT //not a valid mode
     } MatrixModeID;
     
+    // Plot types for use with protected function plotLevel.
+    // Exposed as public so that the values are available as settings.
+    typedef enum
+    {
+        // Bar-graph type plot going from bottom to top
+        MATRIX_MODE_PLOT_TYPE_VERTICAL,
+        // Bar-graph type plot going from left to right
+        MATRIX_MODE_PLOT_TYPE_HORIZONTAL,
+        // Shift matrix left and plot the new level on the rightmost column
+        MATRIX_MODE_PLOT_TYPE_SHIFTING,
+        
+        MATRIX_MODE_PLOT_TYPE_COUNT
+    } PlotType;
+    
     // Get the ID of a mode
     MatrixModeID getID() const {return m_id;};
     
@@ -97,17 +111,6 @@ protected:
     // Plot the given level (in the range 0-100) on the matrix, using the given
     // plot type/style and optionally setting all pixels below the given level.
     // Note: does not call m_driver->update().
-    typedef enum
-    {
-        // Bar-graph type plot going from bottom to top
-        MATRIX_MODE_PLOT_TYPE_VERTICAL,
-        // Bar-graph type plot going from left to right
-        MATRIX_MODE_PLOT_TYPE_HORIZONTAL,
-        // Shift matrix left and plot the new level on the rightmost column
-        MATRIX_MODE_PLOT_TYPE_SHIFTING,
-        
-        MATRIX_MODE_PLOT_TYPE_COUNT
-    } PlotType;
     void plotLevel(unsigned int level,
         PlotType type = MATRIX_MODE_PLOT_TYPE_VERTICAL,
         bool fill = false);

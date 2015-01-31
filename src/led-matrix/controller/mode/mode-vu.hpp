@@ -4,6 +4,7 @@
 #define _MATRIX_MODE_VU_H
 
 #include <led-matrix/controller/mode/mode.hpp>
+#include <led-matrix/controller/mode/setting/setting-plot-type.hpp>
 
 class MatrixModeVu : public MatrixMode
 {
@@ -18,8 +19,8 @@ private:
     static std::string const s_NAME_STR;
     static std::string const s_DESCRIPTION_STR;
     
-    // TODO - replace with a new setting type
-    PlotType m_plotType;
+    // Setting to adjust the display mode for the VU meter
+    MatrixSettingPlotType * m_plotTypeSetting;
 };
 
 #endif

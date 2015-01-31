@@ -8,6 +8,7 @@
 // Setting implementations
 #include <led-matrix/controller/mode/setting/setting-string.hpp>
 #include <led-matrix/controller/mode/setting/setting-ranged-double.hpp>
+#include <led-matrix/controller/mode/setting/setting-plot-type.hpp>
 
 std::string MatrixSetting::getType() const
 {
@@ -20,6 +21,10 @@ std::string MatrixSetting::getType() const
         case MATRIX_SETTING_ID_RANGED_DOUBLE:
         {
             return "number";
+        }
+        case MATRIX_SETTING_ID_PLOT_TYPE:
+        {
+            return "index";
         }
         
         // No default case to preserve compiler warnings for unhandled enum
@@ -62,6 +67,13 @@ void MatrixSetting::destroySetting(MatrixSetting * setting)
                 delete settingRangedDouble;
                 return;
             }
+            case MATRIX_SETTING_ID_PLOT_TYPE:
+            {
+                MatrixSettingPlotType * const settingPlotType =
+                    (MatrixSettingPlotType *)setting;
+                delete settingPlotType;
+                return;
+            }
             
             // No default case to preserve compiler warnings for unhandled enum
             // values
@@ -101,6 +113,12 @@ MatrixSetting * MatrixSetting::createSetting(MatrixSettingID id,
             MatrixSettingRangedDouble * const settingRangedDouble =
                 new MatrixSettingRangedDouble(name, description);
             return settingRangedDouble;
+        }
+        case MATRIX_SETTING_ID_PLOT_TYPE:
+        {
+            MatrixSettingPlotType * const settingPlotType =
+                new MatrixSettingPlotType(name, description);
+            return settingPlotType;
         }
         
         // No default case to preserve compiler warnings for unhandled enum

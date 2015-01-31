@@ -90,6 +90,7 @@ function buildSettingsCell(settingsCell, settingsData)
     // Build a form to hold the settings' info and inputs
     var settingsForm = $('<form/>');
     
+    // TODO - update to support a different layout for string/double/indexed
     $(settingsData.settings).each( function(index, setting) {
         // Write the name, description, and current value
         settingsForm.append('<b>' + setting.name + '</b><br>');
@@ -135,6 +136,8 @@ function buildSettingsCell(settingsCell, settingsData)
                     });
             }
         });
+        // TODO - also get all the (whatever type) fields for the indexed
+        // settings and submit their values
         
         return false;
     });

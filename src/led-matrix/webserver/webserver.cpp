@@ -10,6 +10,7 @@
 // Setting implementations
 #include <led-matrix/controller/mode/setting/setting-string.hpp>
 #include <led-matrix/controller/mode/setting/setting-ranged-double.hpp>
+#include <led-matrix/controller/mode/setting/setting-plot-type.hpp>
  
 MatrixWebserver::MatrixWebserver(unsigned int port,
     std::string const & filesDir,
@@ -296,6 +297,22 @@ void MatrixWebserver::setSettingHandler(pion::http::request_ptr& httpRequest,
                                 else
                                 {
                                     settingRangedDouble->setValue(valueDouble);
+                                }
+                                break;
+                            }
+                            case MatrixSetting::MATRIX_SETTING_ID_PLOT_TYPE:
+                            {
+                                MatrixSettingPlotType * const settingPlotType =
+                                    (MatrixSettingPlotType *)setting;
+                                size_t valueIndex;
+                                iss >> valueIndex;
+                                if ((iss.rdstate() & std::istringstream::failbit) != 0)
+                                {
+                                    error = true;
+                                }
+                                else
+                                {
+                                    settingPlotType->setValue(valueIndex);
                                 }
                                 break;
                             }
