@@ -12,16 +12,17 @@
 #include <led-matrix/controller/mode/mode-text.hpp>
 #include <led-matrix/controller/mode/mode-vu.hpp>
 #include <led-matrix/controller/mode/mode-sine.hpp>
+#include <led-matrix/controller/mode/mode-waves.hpp>
 
 MatrixMode::MatrixMode(MatrixModeID id, std::string name, std::string description,
     long int delayMs, MatrixDriver * driver)
  : m_driver(driver)
  , m_settings()
+ , m_id(id)
  , m_nameStr(name), m_descriptionStr(description)
  , m_delayMs(delayMs)
 {
-    checkID(id, "MatrixMode::MatrixMode()");
-    m_id = id;
+    checkID(m_id, "MatrixMode::MatrixMode()");
     
     // Add the setting for update speed
     m_speedSetting = (MatrixSettingRangedDouble *) MatrixSetting::createSetting(
@@ -106,6 +107,13 @@ void MatrixMode::destroyMode(MatrixMode * mode)
                 return;
             }
             
+            case MATRIX_MODE_ID_WAVES:
+            {
+                MatrixModeWaves * const modeWaves = (MatrixModeWaves *)mode;
+                delete modeWaves;
+                return;
+            }
+            
             // No default case to preserve compiler warnings for unhandled enum
             // values
             case MATRIX_MODE_ID_COUNT:
@@ -154,6 +162,12 @@ MatrixMode * MatrixMode::createMode(MatrixModeID id, MatrixDriver * driver)
         {
             MatrixModeSine * const modeSine = new MatrixModeSine(driver);
             return modeSine;
+        }
+        
+        case MATRIX_MODE_ID_WAVES:
+        {
+            MatrixModeWaves * const modeWaves = new MatrixModeWaves(driver);
+            return modeWaves;
         }
         
         // No default case to preserve compiler warnings for unhandled enum

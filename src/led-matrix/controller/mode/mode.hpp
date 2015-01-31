@@ -24,6 +24,8 @@ public:
         MATRIX_MODE_ID_VU, //MarixModeVu
         // Sine wave mode
         MATRIX_MODE_ID_SINE, //MatrixModeSine
+        // "Waves" mode
+        MATRIX_MODE_ID_WAVES, //MatrixModeWaves
         
         // Add new modes above so the count remains correct
         MATRIX_MODE_ID_COUNT //not a valid mode
@@ -111,7 +113,7 @@ protected:
     
 private:
     // The ID of this mode
-    MatrixModeID m_id;
+    MatrixModeID const m_id;
     // String name of this mode
     std::string const m_nameStr;
     // String description of this mode
